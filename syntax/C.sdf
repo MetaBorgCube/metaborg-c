@@ -16,4 +16,4 @@ imports
     C-AbstractDeclarators
 
 hiddens
-  context-free start-symbols TranslationUnit
+  context-free start-symbols TranslationUnit AssignExp Stm

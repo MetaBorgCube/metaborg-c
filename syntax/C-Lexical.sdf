@@ -10,8 +10,13 @@ exports
     [\*]                            -> Asterisk
     "//" ~[\n]* [\n]                -> Comment
 
+    -> EOF
+    
   lexical restrictions
     Asterisk -/- [\/]
+    EOF           -/- ~[]
 
   context-free restrictions
-    LAYOUT? -/- [\ \t\n]
+    LAYOUT? -/- [\ \t\n\12]
+    LAYOUT? -/- [\/].[\/]
+    LAYOUT? -/- [\/].[\*]
