@@ -7,3 +7,4 @@ builders
   provider : include/c.ctree
   observer : editor-analyze
   builder  : "Show abstract syntax" = debug-generate-aterm (openeditor) (realtime) (meta) (source)
+  builder  : "Pretty print" = debug-pretty-print (realtime) (meta) (source)
