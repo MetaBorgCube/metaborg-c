@@ -13,8 +13,8 @@ exports
 
   sorts IDENTIFIER
   context-free syntax
-    ID          -> IDENTIFIER {cons("Id")}
-    ID          -> TypedefName {cons("TypeId"), avoid}
+    ID          -> IDENTIFIER {cons("C-Id")}
+    ID          -> TypedefName {cons("C-TypeId"), avoid}
     IDENTIFIER  -> IdOrTypedefName
     TypedefName -> IdOrTypedefName
 

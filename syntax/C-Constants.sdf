@@ -2,14 +2,14 @@ module C-Constants
 exports
   sorts Constant StringLiteralList
   context-free syntax
-    IntLiteral   -> Constant {cons("IntConst")}
-    HexLiteral   -> Constant {cons("HexConst")}
-    OctLiteral   -> Constant {cons("OctConst")}
-    FloatLiteral -> Constant {cons("FloatConst")}    
-    CharLiteral  -> Constant {cons("CharConst")}
+    IntLiteral   -> Constant {cons("C-IntConst")}
+    HexLiteral   -> Constant {cons("C-HexConst")}
+    OctLiteral   -> Constant {cons("C-OctConst")}
+    FloatLiteral -> Constant {cons("C-FloatConst")}    
+    CharLiteral  -> Constant {cons("C-CharConst")}
 
     %%% TODO: Why a list??
-    StringLiteral+ -> StringLiteralList {cons("StringLit")}
+    StringLiteral+ -> StringLiteralList {cons("C-StringLit")}
 
   sorts StringLiteral CharLiteral IntLiteral HexLiteral OctLiteral FloatLiteral
         Char StringChar OctalEsc IntFlags FloatFlags

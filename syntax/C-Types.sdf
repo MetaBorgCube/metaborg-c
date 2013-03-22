@@ -4,54 +4,54 @@ imports
 
 exports
   context-free syntax
-    "typedef"  -> StorageClass {cons("Typedef")}
-    "extern"   -> StorageClass {cons("Extern")}
-    "static"   -> StorageClass {cons("Static")}
-    "auto"     -> StorageClass {cons("Auto")}
-    "register" -> StorageClass {cons("Register")}
+    "typedef"  -> StorageClass {cons("C-Typedef")}
+    "extern"   -> StorageClass {cons("C-Extern")}
+    "static"   -> StorageClass {cons("C-Static")}
+    "auto"     -> StorageClass {cons("C-Auto")}
+    "register" -> StorageClass {cons("C-Register")}
 
   context-free syntax
-    "int"      -> BasicTypeName {cons("Int")}
-    "char"     -> BasicTypeName {cons("Char")}
-    "short"    -> BasicTypeName {cons("Short")}
-    "long"     -> BasicTypeName {cons("Long")}
-    "float"    -> BasicTypeName {cons("Float")}
-    "double"   -> BasicTypeName {cons("Double")}
-    "signed"   -> BasicTypeName {cons("Signed")}
-    "unsigned" -> BasicTypeName {cons("Unsigned")}
-    "void"     -> BasicTypeName {cons("Void")}
+    "int"      -> BasicTypeName {cons("C-Int")}
+    "char"     -> BasicTypeName {cons("C-Char")}
+    "short"    -> BasicTypeName {cons("C-Short")}
+    "long"     -> BasicTypeName {cons("C-Long")}
+    "float"    -> BasicTypeName {cons("C-Float")}
+    "double"   -> BasicTypeName {cons("C-Double")}
+    "signed"   -> BasicTypeName {cons("C-Signed")}
+    "unsigned" -> BasicTypeName {cons("C-Unsigned")}
+    "void"     -> BasicTypeName {cons("C-Void")}
 
   context-free syntax
-    "const"    -> TypeQualifier {cons("Const")}
-    "volatile" -> TypeQualifier {cons("Volatile")}
+    "const"    -> TypeQualifier {cons("C-Const")}
+    "volatile" -> TypeQualifier {cons("C-Volatile")}
 
   context-free syntax
-    ( DeclarationQualifierList | TypeQualifier+ ) {IdDecl ","}* ";" -> Declaration {cons("Declaration")}
-    ( DeclarationSpecifier | TypeSpecifier ) {VarDecl ","}* ";"     -> Declaration {cons("Declaration2")}
+    ( DeclarationQualifierList | TypeQualifier+ ) {IdDecl ","}* ";" -> Declaration {cons("C-Declaration")}
+    ( DeclarationSpecifier | TypeSpecifier ) {VarDecl ","}* ";"     -> Declaration {cons("C-Declaration2")}
 
   context-free syntax
     IdDeclarator                   -> IdDecl
-    IdDeclarator "=" Initializer   -> IdDecl      {cons("IdDeclInit")}
+    IdDeclarator "=" Initializer   -> IdDecl      {cons("C-IdDeclInit")}
     Declarator                     -> VarDecl
-    Declarator   "=" Initializer   -> VarDecl     {cons("DeclInit")}
+    Declarator   "=" Initializer   -> VarDecl     {cons("C-DeclInit")}
 
-    "{" {Initializer ","}+ "}"     -> Initializer {cons("ArrayInit")}
-    "{" {Initializer ","}+ "," "}" -> Initializer {cons("ArrayInitIncomplete")}
-    AssignExp                      -> Initializer {cons("AssignInit")}
+    "{" {Initializer ","}+ "}"     -> Initializer {cons("C-ArrayInit")}
+    "{" {Initializer ","}+ "," "}" -> Initializer {cons("C-ArrayInitIncomplete")}
+    AssignExp                      -> Initializer {cons("C-AssignInit")}
 
   context-free syntax
-    TypeQualifier* TypeOrDefName (TypeQualifier | BasicTypeName)* -> TypeSpecifier {cons("TypeSpec")}
+    TypeQualifier* TypeOrDefName (TypeQualifier | BasicTypeName)* -> TypeSpecifier {cons("C-TypeSpec")}
 
   context-free syntax
     StorageClass  -> DeclarationQualifier
     TypeQualifier -> DeclarationQualifier
 
   context-free syntax
-    TypeQualifier* StorageClass DeclarationQualifier*  -> DeclarationQualifierList {cons("DQualifiers")}
+    TypeQualifier* StorageClass DeclarationQualifier*  -> DeclarationQualifierList {cons("C-DQualifiers")}
 
   context-free syntax
     TypeQualifier* StorageClass DeclarationQualifier* TypeOrDefName
-    (DeclarationQualifier | BasicTypeName)* -> DeclarationSpecifier {cons("DeclSpec")}
+    (DeclarationQualifier | BasicTypeName)* -> DeclarationSpecifier {cons("C-DeclSpec")}
 
     (BasicTypeName | ElaboratedTypeName | TypedefName) -> TypeOrDefName
 

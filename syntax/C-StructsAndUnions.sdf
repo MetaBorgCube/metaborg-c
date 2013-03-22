@@ -6,18 +6,18 @@ exports
     EnumSpecifier   -> ElaboratedTypeName
 
   context-free syntax
-    "struct" IdOrTypedefName? "{" MemberDeclaration+ "}" -> StructSpecifier {cons("Struct")}
-    "struct" IdOrTypedefName                             -> StructSpecifier {cons("StructId")}
+    "struct" IdOrTypedefName? "{" MemberDeclaration+ "}" -> StructSpecifier {cons("C-Struct")}
+    "struct" IdOrTypedefName                             -> StructSpecifier {cons("C-StructId")}
 
   context-free syntax
-    "union" IdOrTypedefName? "{" MemberDeclaration+ "}" -> UnionSpecifier {cons("Union")}
-    "union" IdOrTypedefName                             -> UnionSpecifier {cons("UnionId")}
+    "union" IdOrTypedefName? "{" MemberDeclaration+ "}" -> UnionSpecifier {cons("C-Union")}
+    "union" IdOrTypedefName                             -> UnionSpecifier {cons("C-UnionId")}
 
   context-free syntax
-    TypeSpecifier  {MemberDeclarator   ","}+ ";" -> MemberDeclaration {cons("MemDecl")}
-    TypeQualifier+ {MemberIdDeclarator ","}+ ";" -> MemberDeclaration {cons("MemDecl1")}
+    TypeSpecifier  {MemberDeclarator   ","}+ ";" -> MemberDeclaration {cons("C-MemDecl")}
+    TypeQualifier+ {MemberIdDeclarator ","}+ ";" -> MemberDeclaration {cons("C-MemDecl1")}
 
   context-free syntax
     Declarator                  -> MemberDeclarator
-    Declarator? ":" ConstantExp -> MemberDeclarator {cons("BitFieldSize")}
+    Declarator? ":" ConstantExp -> MemberDeclarator {cons("C-BitFieldSize")}
 

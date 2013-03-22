@@ -3,12 +3,12 @@ exports
   sorts TranslationUnit ExternalDef FunDef FunDefTypeSpec NoTypeSpecifier FunDefDecl
 
   context-free syntax
-    ExternalDef+ -> TranslationUnit {cons("TranslationUnit")}
+    ExternalDef+ -> TranslationUnit {cons("C-TranslationUnit")}
 
     FunDef      -> ExternalDef
     %% Declaration -> ExternalDef
 
-    FunDefTypeSpec FunDefDecl CompoundStm -> FunDef {cons("FunDef")}
+    FunDefTypeSpec FunDefDecl CompoundStm -> FunDef {cons("C-FunDef")}
 
     %% FunDef -> Declaration %% injection for internal functions (a GCC extension of C)
 
@@ -18,8 +18,8 @@ exports
     DeclarationQualifierList  -> FunDefTypeSpec
     TypeQualifier+            -> FunDefTypeSpec
 
-     -> NoTypeSpecifier {cons("NoTypeSpecifier")}
+     -> NoTypeSpecifier {cons("C-NoTypeSpecifier")}
 
     IdDeclarator                   -> FunDefDecl
-%%    OldFunDeclarator Declaration*  -> FunDefDecl {cons("OldFunDefDecl")}
+%%    OldFunDeclarator Declaration*  -> FunDefDecl {cons("C-OldFunDefDecl")}
 

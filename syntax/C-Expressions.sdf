@@ -13,12 +13,12 @@ exports
   sorts PostfixExp
   context-free syntax
     PrimaryExp                           -> PostfixExp
-    PostfixExp "[" CommaExp "]"          -> PostfixExp {cons("ArrayIndex")}
-    PostfixExp "(" {AssignExp ","}* ")"  -> PostfixExp {cons("FunCall")}
-    PostfixExp "."  MemberName           -> PostfixExp {cons("Field")}
-    PostfixExp "->" MemberName           -> PostfixExp {cons("DerefMember")}
-    PostfixExp "++"                      -> PostfixExp {cons("PostIncr")}
-    PostfixExp "--"                      -> PostfixExp {cons("PostDecr")}
+    PostfixExp "[" CommaExp "]"          -> PostfixExp {cons("C-ArrayIndex")}
+    PostfixExp "(" {AssignExp ","}* ")"  -> PostfixExp {cons("C-FunCall")}
+    PostfixExp "."  MemberName           -> PostfixExp {cons("C-Field")}
+    PostfixExp "->" MemberName           -> PostfixExp {cons("C-DerefMember")}
+    PostfixExp "++"                      -> PostfixExp {cons("C-PostIncr")}
+    PostfixExp "--"                      -> PostfixExp {cons("C-PostDecr")}
 
   sorts MemberName
   context-free syntax
@@ -28,75 +28,75 @@ exports
   sorts UnaryExp
   context-free syntax
     PostfixExp     -> UnaryExp
-    "++" UnaryExp  -> UnaryExp {cons("PreIncr")}
-    "--" UnaryExp  -> UnaryExp {cons("PreDecr")}
-    "&" CastExp    -> UnaryExp {cons("Address")}
-    "*" CastExp    -> UnaryExp {cons("Deref")}
-    "+" CastExp    -> UnaryExp {cons("Positive")}
-    "-" CastExp    -> UnaryExp {cons("Negative")}
-    "~" CastExp    -> UnaryExp {cons("Tilde")}
-    "!" CastExp    -> UnaryExp {cons("Negation")}
+    "++" UnaryExp  -> UnaryExp {cons("C-PreIncr")}
+    "--" UnaryExp  -> UnaryExp {cons("C-PreDecr")}
+    "&" CastExp    -> UnaryExp {cons("C-Address")}
+    "*" CastExp    -> UnaryExp {cons("C-Deref")}
+    "+" CastExp    -> UnaryExp {cons("C-Positive")}
+    "-" CastExp    -> UnaryExp {cons("C-Negative")}
+    "~" CastExp    -> UnaryExp {cons("C-Tilde")}
+    "!" CastExp    -> UnaryExp {cons("C-Negation")}
 
-    "sizeof" UnaryExp         -> UnaryExp {cons("SizeofExp")}
-    "sizeof" "(" TypeName ")" -> UnaryExp {cons("SizeofType")}
+    "sizeof" UnaryExp         -> UnaryExp {cons("C-SizeofExp")}
+    "sizeof" "(" TypeName ")" -> UnaryExp {cons("C-SizeofType")}
 
   sorts CastExp
   context-free syntax
     UnaryExp                 -> CastExp
-    "(" TypeName ")" CastExp -> CastExp {cons("TypeCast")}
+    "(" TypeName ")" CastExp -> CastExp {cons("C-TypeCast")}
 
   sorts MulExp
   context-free syntax
     CastExp            -> MulExp
-    MulExp "*" CastExp -> MulExp {cons("Mul")}
-    MulExp "/" CastExp -> MulExp {cons("Div")}
-    MulExp "%" CastExp -> MulExp {cons("Mod")}
+    MulExp "*" CastExp -> MulExp {cons("C-Mul")}
+    MulExp "/" CastExp -> MulExp {cons("C-Div")}
+    MulExp "%" CastExp -> MulExp {cons("C-Mod")}
 
   sorts AddExp
   context-free syntax
     MulExp            -> AddExp
-    AddExp "+" MulExp -> AddExp {cons("Add")}
-    AddExp "-" MulExp -> AddExp {cons("Subt")}
+    AddExp "+" MulExp -> AddExp {cons("C-Add")}
+    AddExp "-" MulExp -> AddExp {cons("C-Subt")}
 
   sorts ShiftExp
   context-free syntax
     AddExp               -> ShiftExp
-    ShiftExp "<<" AddExp -> ShiftExp {cons("ShiftLeft")}
-    ShiftExp ">>" AddExp -> ShiftExp {cons("ShiftRight")}
+    ShiftExp "<<" AddExp -> ShiftExp {cons("C-ShiftLeft")}
+    ShiftExp ">>" AddExp -> ShiftExp {cons("C-ShiftRight")}
 
   sorts RelExp
   context-free syntax
     ShiftExp             -> RelExp
-    RelExp "<" ShiftExp  -> RelExp {cons("Lt")}
-    RelExp ">" ShiftExp  -> RelExp {cons("Gt")}
-    RelExp "<=" ShiftExp -> RelExp {cons("Le")}
-    RelExp ">=" ShiftExp -> RelExp {cons("Ge")}
+    RelExp "<" ShiftExp  -> RelExp {cons("C-Lt")}
+    RelExp ">" ShiftExp  -> RelExp {cons("C-Gt")}
+    RelExp "<=" ShiftExp -> RelExp {cons("C-Le")}
+    RelExp ">=" ShiftExp -> RelExp {cons("C-Ge")}
 
   sorts EqualityExp
   context-free syntax
     RelExp                  -> EqualityExp
-    EqualityExp "==" RelExp -> EqualityExp {cons("Equal")}
-    EqualityExp "!=" RelExp -> EqualityExp {cons("NotEqual")}
+    EqualityExp "==" RelExp -> EqualityExp {cons("C-Equal")}
+    EqualityExp "!=" RelExp -> EqualityExp {cons("C-NotEqual")}
 
   sorts ANDExp
   context-free syntax
     EqualityExp            -> ANDExp
-    EqualityExp "&" ANDExp -> ANDExp {cons("And")}
+    EqualityExp "&" ANDExp -> ANDExp {cons("C-And")}
 
   sorts ExclORExp
   context-free syntax
     ANDExp               -> ExclORExp
-    ANDExp "^" ExclORExp -> ExclORExp {cons("ExOr")}
+    ANDExp "^" ExclORExp -> ExclORExp {cons("C-ExOr")}
 
   sorts InclORExp
   context-free syntax
     ExclORExp               -> InclORExp
-    ExclORExp "|" InclORExp -> InclORExp {cons("IncOr")}
+    ExclORExp "|" InclORExp -> InclORExp {cons("C-IncOr")}
 
   sorts LogicalANDExp
   context-free syntax
     InclORExp                    -> LogicalANDExp
-    LogicalANDExp "&&" InclORExp -> LogicalANDExp {cons("LAnd")}
+    LogicalANDExp "&&" InclORExp -> LogicalANDExp {cons("C-LAnd")}
 
   lexical restrictions
     "&" -/- [\&]
@@ -104,38 +104,38 @@ exports
   sorts LogicalORExp
   context-free syntax
     LogicalANDExp                   -> LogicalORExp
-    LogicalORExp "||" LogicalANDExp -> LogicalORExp {cons("LOr")}
+    LogicalORExp "||" LogicalANDExp -> LogicalORExp {cons("C-LOr")}
 
   sorts CondExp
   context-free syntax
     LogicalORExp                          -> CondExp
-    LogicalORExp "?" CommaExp ":" CondExp -> CondExp {cons("IfExp")}
+    LogicalORExp "?" CommaExp ":" CondExp -> CondExp {cons("C-IfExp")}
 
   sorts AssignExp
   context-free syntax
     CondExp                     -> AssignExp
-    UnaryExp AssignOp AssignExp -> AssignExp {cons("Assign")}
+    UnaryExp AssignOp AssignExp -> AssignExp {cons("C-Assign")}
 
   sorts AssignOp
   context-free syntax
-    "="   -> AssignOp {cons("AssignEq")}
-    "*="  -> AssignOp {cons("AssignMul")}
-    "/="  -> AssignOp {cons("AssignDiv")}
-    "%="  -> AssignOp {cons("AssignMod")}
-    "+="  -> AssignOp {cons("AssignPlus")}
-    "-="  -> AssignOp {cons("AssignMin")}
-    "<<=" -> AssignOp {cons("AssignSL")}
-    ">>=" -> AssignOp {cons("AssignSR")}
-    "&="  -> AssignOp {cons("AssignAnd")}
-    "^="  -> AssignOp {cons("AssignExp")}
-    "|="  -> AssignOp {cons("AssignOr")}
+    "="   -> AssignOp {cons("C-AssignEq")}
+    "*="  -> AssignOp {cons("C-AssignMul")}
+    "/="  -> AssignOp {cons("C-AssignDiv")}
+    "%="  -> AssignOp {cons("C-AssignMod")}
+    "+="  -> AssignOp {cons("C-AssignPlus")}
+    "-="  -> AssignOp {cons("C-AssignMin")}
+    "<<=" -> AssignOp {cons("C-AssignSL")}
+    ">>=" -> AssignOp {cons("C-AssignSR")}
+    "&="  -> AssignOp {cons("C-AssignAnd")}
+    "^="  -> AssignOp {cons("C-AssignExp")}
+    "|="  -> AssignOp {cons("C-AssignOr")}
 
   sorts CommaExp CommaExpOpt
   context-free syntax
     AssignExp              -> CommaExp
-    AssignExp "," CommaExp -> CommaExp    {cons("Comma")}
+    AssignExp "," CommaExp -> CommaExp    {cons("C-Comma")}
 
-              -> CommaExpOpt {cons("EmptyExp")}
+              -> CommaExpOpt {cons("C-EmptyExp")}
     CommaExp  -> CommaExpOpt
 
   sorts ConstantExp

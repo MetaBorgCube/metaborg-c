@@ -1,8 +1,8 @@
 module C-ParameterDeclarators
 exports
   context-free syntax
-    ParamDeclTypeSpec ( AbstractDeclarator | IdDeclarator )?   -> ParamDeclaration {cons("ParamDecl")}
-    ( DeclarationSpecifier | TypeSpecifier ) TypedefDeclarator -> ParamDeclaration {cons("ParamDecl2")}
+    ParamDeclTypeSpec ( AbstractDeclarator | IdDeclarator )?   -> ParamDeclaration {cons("C-ParamDecl")}
+    ( DeclarationSpecifier | TypeSpecifier ) TypedefDeclarator -> ParamDeclaration {cons("C-ParamDecl2")}
 
     %%% TODO: These are almost the same as for FunDef ... 
 
@@ -12,6 +12,6 @@ exports
     TypeQualifier+            -> ParamDeclTypeSpec
 
   context-free syntax
-    TypeSpecifier  AbstractDeclarator? -> TypeName {cons("TypeName")}
-    TypeQualifier+ AbstractDeclarator? -> TypeName {cons("TypeName1")}
+    TypeSpecifier  AbstractDeclarator? -> TypeName {cons("C-TypeName")}
+    TypeQualifier+ AbstractDeclarator? -> TypeName {cons("C-TypeName1")}
 

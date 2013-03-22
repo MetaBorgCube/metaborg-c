@@ -15,35 +15,35 @@ exports
 
   sorts LabeledStm
   context-free syntax
-    IdOrTypedefName ":" Stm     -> LabeledStm {cons("Label")}
-    "case" ConstantExp ":" Stm  -> LabeledStm {cons("Case")}
-    "default" ":" Stm           -> LabeledStm {cons("Default")}
+    IdOrTypedefName ":" Stm     -> LabeledStm {cons("C-Label")}
+    "case" ConstantExp ":" Stm  -> LabeledStm {cons("C-Case")}
+    "default" ":" Stm           -> LabeledStm {cons("C-Default")}
 
   sorts CompoundStm
   context-free syntax
-    "{" Declaration* Stm* "}" -> CompoundStm {cons("Compound")}
+    "{" Declaration* Stm* "}" -> CompoundStm {cons("C-Compound")}
 
   sorts ExpStm
   context-free syntax
-    CommaExpOpt ";" -> ExpStm {cons("Stat")}
+    CommaExpOpt ";" -> ExpStm {cons("C-Stat")}
 
   sorts SelectionStm
   context-free syntax
-    "if" "(" CommaExp ")" Stm             -> SelectionStm {cons("If")}
-    "if" "(" CommaExp ")" Stm "else" Stm  -> SelectionStm {cons("IfElse")}
-    "switch" "(" CommaExp ")" Stm         -> SelectionStm {cons("Switch")}
+    "if" "(" CommaExp ")" Stm             -> SelectionStm {cons("C-If")}
+    "if" "(" CommaExp ")" Stm "else" Stm  -> SelectionStm {cons("C-IfElse")}
+    "switch" "(" CommaExp ")" Stm         -> SelectionStm {cons("C-Switch")}
 
   sorts IterationStm
   context-free syntax
-    "while" "(" CommaExp ")" Stm           -> IterationStm {cons("While")}
-    "do" Stm "while" "(" CommaExp ")" ";"  -> IterationStm {cons("DoWhile")}
-    "for" "(" CommaExpOpt ";" CommaExpOpt ";" CommaExpOpt ")" Stm -> IterationStm {cons("For")}
+    "while" "(" CommaExp ")" Stm           -> IterationStm {cons("C-While")}
+    "do" Stm "while" "(" CommaExp ")" ";"  -> IterationStm {cons("C-DoWhile")}
+    "for" "(" CommaExpOpt ";" CommaExpOpt ";" CommaExpOpt ")" Stm -> IterationStm {cons("C-For")}
 
   sorts JumpStm
   context-free syntax
-    "goto" IdOrTypedefName ";" -> JumpStm {cons("Goto")}
-    "continue" ";"             -> JumpStm {cons("Continue")}
-    "break" ";"                -> JumpStm {cons("Break")}
-    "return" CommaExpOpt ";"   -> JumpStm {cons("Return")}
-    "exit" CommaExpOpt ";"     -> JumpStm {cons("Exit")}
+    "goto" IdOrTypedefName ";" -> JumpStm {cons("C-Goto")}
+    "continue" ";"             -> JumpStm {cons("C-Continue")}
+    "break" ";"                -> JumpStm {cons("C-Break")}
+    "return" CommaExpOpt ";"   -> JumpStm {cons("C-Return")}
+    "exit" CommaExpOpt ";"     -> JumpStm {cons("C-Exit")}
 

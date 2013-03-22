@@ -45,11 +45,11 @@ exports
     "4" -> LineFlag
 
   context-free syntax
-    ControlLine -> ExternalDef {cons("PpControl")}
-    ControlLine -> MemberDeclaration {cons("PpControl")}
+    ControlLine -> ExternalDef {cons("C-PpControl")}
+    ControlLine -> MemberDeclaration {cons("C-PpControl")}
 
   context-free syntax
     IfLine ExternalDef* 
     ( ElifLine ExternalDef* )* 
     ( ElseLine ExternalDef* )? 
-    "#" "endif" -> ExternalDef {cons("PpIf")}
+    "#" "endif" -> ExternalDef {cons("C-PpIf")}
