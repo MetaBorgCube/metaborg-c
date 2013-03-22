@@ -22,3 +22,4 @@ syntax/C.generated.pp
 utils
 lib/*.generated.str
 lib-refactoring/*.generated.str
+*.aterm
