@@ -1,0 +1,26 @@
+module c
+
+imports
+  libstratego-lib
+  libstratego-gpp
+  libstratego-aterm
+  include/C
+  lib/editor-common.generated
+
+rules // Analysis
+  
+  // Main entry point for analyzes, called when a single file is opened in the editor.
+  editor-analyze:
+    (ast, path, project-path) -> (ast, [], [], [])
+    with
+      editor-init
+
+rules // Debugging
+  
+  // Prints the abstract syntax ATerm of a selection.
+  debug-generate-aterm:
+    (selected, position, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path;
+      result   := selected
+  

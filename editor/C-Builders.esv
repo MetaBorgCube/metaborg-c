@@ -1,0 +1,9 @@
+module C-Builders
+
+imports C-Builders.generated
+
+builders
+
+  provider : include/c.ctree
+  observer : editor-analyze
+  builder  : "Show abstract syntax" = debug-generate-aterm (openeditor) (realtime) (meta) (source)
