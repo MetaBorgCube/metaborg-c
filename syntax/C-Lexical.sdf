@@ -4,7 +4,7 @@ hiddens
 
 exports
   lexical syntax
-    [\ \t\n\12]                     -> LAYOUT
+    [\ \t\n\r\12]                   -> LAYOUT
     "/*" ( ~[\*] | Asterisk )* "*/" -> Comment
     Comment                         -> LAYOUT
     [\*]                            -> Asterisk
@@ -17,6 +17,6 @@ exports
     EOF           -/- ~[]
 
   context-free restrictions
-    LAYOUT? -/- [\ \t\n\12]
+    LAYOUT? -/- [\ \t\n\r\12]
     LAYOUT? -/- [\/].[\/]
     LAYOUT? -/- [\/].[\*]
