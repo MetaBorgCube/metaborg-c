@@ -6,7 +6,7 @@ exports
     ExternalDef+ -> TranslationUnit {cons("C-TranslationUnit")}
 
     FunDef      -> ExternalDef
-    %% Declaration -> ExternalDef
+    Declaration -> ExternalDef
 
     FunDefTypeSpec FunDefDecl CompoundStm -> FunDef {cons("C-FunDef")}
 
