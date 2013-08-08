@@ -27,10 +27,10 @@ templates
 	SelectionStm.IfElse = <if(<Exp>) <Stm> else <Stm>>
 	SelectionStm.Switch = <switch(<Exp>) <Stm>>
 	
-	IterationStm.While   = <while(<Exp>) <Stm>>
-	IterationStm.Do      = <do <Stm> while(<Exp>)>
-	IterationStm.For     = <for(<Exp?>; <Exp?>; <Exp?>) <Stm>>
-	IterationStm.DeclFor = <for(<Decl> <Exp?>; <Exp?>) <Stm>>
+	IterStm.While   = <while(<Exp>) <Stm>>
+	IterStm.Do      = <do <Stm> while(<Exp>)>
+	IterStm.For     = <for(<Exp?>; <Exp?>; <Exp?>) <Stm>>
+	IterStm.DeclFor = <for(<Decl> <Exp?>; <Exp?>) <Stm>>
 	
 	JmpStm.Goto     = <goto <Id>;>
 	JmpStm.Continue = <continue;>
