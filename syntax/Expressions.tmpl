@@ -13,7 +13,7 @@ templates
 	
 	PostfixExp             = <<PrimExp>>
 	PostfixExp.ArrayAccess = <<PostfixExp>[<Exp>]>
-	PostfixExp.Call        = <<PostfixExp>(<ArgExp*; separator=", ">)>
+	PostfixExp.Call        = <<PostfixExp>(<AssignExp*; separator=", ">)>
 	PostfixExp.Access      = <<PostfixExp>.Id>
 	PostfixExp.PtrAccess   = <<PostfixExp>-\>Id>
 	PostfixExp.PostInc     = <<PostfixExp>++>
@@ -113,7 +113,7 @@ templates
 	AssignOp.BXor   = <^=>
 	AssignOp.BOr    = <|=>
 
-	Exp       = <<AssignExp>> {prefer}
-	Exp.Comma = <<Exp+; separator=", ">> {avoid}
+	Exp       = <<AssignExp>>
+	Exp.Comma = <<Exp>, <AssignExp>>
 	
 	ConstExp = <<CondExp>>
