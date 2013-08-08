@@ -64,12 +64,13 @@ lexical syntax // Constants
 	~[\>\n]   -> HChar
 	~[\"\n]   -> QChar
 	
-	"0" [Xx] -> HexPrefix
-	[uU]     -> UnsignedPrefix
-	[lL]     -> LongPrefix
-	"ll"     -> LongLongPrefix
-	"LL"     -> LongLongPrefix
+	[uU]     -> UnsignedSuffix
+	[lL]     -> LongSuffix
+	"ll"     -> LongLongSuffix
+	"LL"     -> LongLongSuffix
 	[flFL]   -> FloatSuffix
+	
+	"0" [Xx] -> HexPrefix
 	[LuU]    -> CharPrefix
 	"u8"     -> EncPrefix
 	[uUL]    -> EncPrefix
@@ -143,9 +144,7 @@ templates // Constants
 	Constant.FloatConst  = <<FloatConst>>
 	Constant.OctConst    = <<OctConst>>
 	Constant.HexConst    = <<HexConst>>
-	Constant.EnumConst   = <<EnumConst>>
 	Constant.CharConst   = <<CharConst>>
-	// Constant.StringConst = <<StringConst>>
 
 lexical syntax // Constants
 
@@ -161,7 +160,7 @@ lexical restrictions
 	
 lexical syntax
 
-	[0-7]+ -> OctConst
+	"0" [0-7]+ -> OctConst // TODO: This does not seem correct wrt C syntax.
 	
 lexical restrictions
 
@@ -203,9 +202,7 @@ lexical syntax
 	BinExponent Sign? DigitSeq -> BinExpPart
 	
 	HexDigit+ -> HexDigitSeq
-	
-	Id -> EnumConst
-	
+
 	// TODO: CharPrefix should be in AST.
 	CharPrefix? "'" CharSeq "'" -> CharConst
 	

@@ -1,7 +1,7 @@
 templates
 
 	Decl.Decl = <<DeclSpecs> <InitDeclarator+; separator=", ">;> {prefer}
-	Decl.Decl = <<DeclSpecs> <InitDeclarator*; separator=", ">;> {avoid}
+	Decl.Decl = <<DeclSpecs> <InitDeclarator*; separator=", ">;> {avoid} // TODO: this changes the meaning of useless declarations.
 	Decl      = <<StaticAssertDecl>>
 	
 	DeclSpec = <<StoreClassSpec>>
