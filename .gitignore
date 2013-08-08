@@ -18,6 +18,9 @@ editor/java/trans
 editor/C-*.generated.esv
 syntax/C*.generated.esv
 syntax/C.generated.pp
+syntax/*generated.sdf
+trans/*.pp.generated.str
+editor/*.generated.esv
 .settings/org.eclipse.jdt.core.prefs
 utils
 lib/*.generated.str

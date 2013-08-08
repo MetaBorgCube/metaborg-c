@@ -1,0 +1,8 @@
+templates
+
+	TranslationUnit.TranslationUnit = <<ExternalDecl+; separator="\n\n">>
+	
+	ExternalDecl = <<FuncDef>>
+	ExternalDecl = <<Decl>>
+	
+	FuncDef.FuncDef = <<DeclSpec+; separator=" "> <Declarator> <Decl*; separator=" "> <CompoundStm>>

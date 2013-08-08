@@ -1,0 +1,131 @@
+templates
+
+	Decl.Decl = <<DeclSpecs> <InitDeclarator+; separator=", ">;> {prefer}
+	Decl.Decl = <<DeclSpecs> <InitDeclarator*; separator=", ">;> {avoid}
+	Decl      = <<StaticAssertDecl>>
+	
+	DeclSpec = <<StoreClassSpec>>
+	DeclSpec = <<TypeSpec>>
+	DeclSpec = <<TypeQualifier>>
+	DeclSpec = <<FuncSpec>>
+	DeclSpec = <<AlignSpec>>
+	
+	DeclSpecs = <<DeclSpec+; separator=" ">>
+	
+	InitDeclarator                = <<Declarator>>
+	InitDeclarator.InitDeclarator = <<Declarator> = <Initializer>>
+	
+	StoreClassSpec.Typedef     = <typedef>
+	StoreClassSpec.Extern      = <extern>
+	StoreClassSpec.Static      = <static>
+	StoreClassSpec.ThreadLocal = <_Thead_local>
+	StoreClassSpec.Auto        = <auto>
+	StoreClassSpec.Register    = <register>
+	
+	TypeSpec.Void = <void>
+	TypeSpec.Char = <char>
+	TypeSpec.Short = <short>
+	TypeSpec.Int = <int>
+	TypeSpec.Long = <long>
+	TypeSpec.Float = <float>
+	TypeSpec.Double = <double>
+	TypeSpec.Signed = <signed>
+	TypeSpec.Unsigned = <unsigned>
+	TypeSpec.Bool = <_Bool>
+	TypeSpec.Complex = <_Complex>
+	TypeSpec = <<AtomicTypeSpec>>
+	TypeSpec = <<StructOrUnionSpec>>
+	TypeSpec = <<EnumSpec>>
+	TypeSpec.TypedefName = <<Id>>
+	
+	StructOrUnionSpec.StructSpec = 
+		<
+			struct <Id?> {
+				<StructDecl+; separator="\n">
+			}
+		>
+	StructOrUnionSpec.StructSpec = <struct <Id>>
+	StructOrUnionSpec.UnionSpec = 
+		<
+			union <Id?> {
+				<StructDecl+; separator="\n">
+			}
+		>
+	StructOrUnionSpec.UnionSpec  = <union <Id>>
+	
+	StructDecl.StructDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator*; separator=", ">;>
+	StructDecl = <<StaticAssertDecl>>
+	
+	SpecifierQualifier = <<TypeSpec>>
+	SpecifierQualifier = <<TypeQualifier>>
+	
+	StructDeclarator = <<Declarator>>
+	StructDeclarator = <<Declarator?> : <ConstExp>>
+	
+	EnumSpec.EnumSpec = 
+		<
+			enum <Id?> {
+				<Enumerator+; separator=",\n"><Comma?>
+			}
+		>
+	EnumSpec.EnumSpec = <enum <Id>>
+	
+	Enumerator.EnumConst = <<EnumConst>>
+	Enumerator.EnumConst = <<EnumConst> = <ConstExp>>
+	
+	AtomicTypeSpec.Atomic = <_Atomic(<TypeName>)>
+	
+	TypeQualifier.Const = <const>
+	TypeQualifier.Restrict = <restrict>
+	TypeQualifier.Volatile = <volatile>
+	TypeQualifier.Atomic = <_Atomic>
+	
+	FuncSpec.Inline = <inline>
+	FuncSpec.NoReturn = <_Noreturn>
+	
+	AlignSpec.Alignas = <_Alignas(<TypeName>)>
+	AlignSpec.Alignas = <_Alignas(<ConstExp>)>
+	
+	Declarator.Declarator = <<Ptr?> <DirectDeclarator>> // TODO: Proper constructor name
+	
+	DirectDeclarator                 = <<Id> >
+	DirectDeclarator                 = <(<Declarator>)> {bracket}
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier*; separator=" "> <AssignExp?>]> // TODO: Give unique constructor name
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[static <TypeQualifier*; separator=" "> <AssignExp>]> // TODO: Give unique constructor name
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> static <AssignExp>]> // TODO: Give unique constructor name
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> *]> // TODO: Give unique constructor name
+	DirectDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamList>)>
+	
+	Ptr.Ptr = <*<TypeQualifier*; separator=" ">>
+	Ptr.Ptr = <*<TypeQualifier*; separator=" "><Ptr>>
+	
+	ParamTypeList.ParamTypeList   = <<ParamDecl*; separator=", ">>
+	ParamTypeList.ParamTypeVararg = <<ParamDecl+; separator=", ">, ...>
+	
+	ParamList.ParamList           = <<Id+; separator=", ">>
+	ParamList                     = <<ParamTypeList>>
+	
+	ParamDecl.ParamDecl = <<DeclSpecs> <Declarator>>
+	ParamDecl.ParamDecl = <<DeclSpecs> <AbstractDeclarator?>> {avoid} // TODO: bad?
+	
+	TypeName.TypeName = <<SpecifierQualifier+; separator=" "> <AbstractDeclarator?>>
+	
+	AbstractDeclarator.ADeclarator = <<Ptr>> // TODO: Proper constructor name
+	AbstractDeclarator.ADeclarator = <<Ptr?> <DirectAbstractDeclarator>> // TODO: Proper constructor name
+	
+	DirectAbstractDeclarator = <(<AbstractDeclarator>)> {bracket}
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[<TypeQualifier*; separator=" "> <AssignExp?>]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[static <TypeQualifier*; separator=" "> <AssignExp>]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[<TypeQualifier+; separator=" "> static <AssignExp>]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[*]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.FuncADeclarator = <<DirectAbstractDeclarator?>(<ParamTypeList>)>
+	
+	Initializer.Initializer = <<AssignExp>>
+	Initializer.Initializer = <{<DesignationInit+; separator=", "><Comma?>}>
+	
+	DesignationInit.DesignationInit = <<Designator+; separator=" "> = <Init>> // TODO: Proper constructor name
+	
+	Designator.Designator = <[<ConstExp>]> // TODO: Proper constructor name
+	Designator.Designator = <.<Id>> // TODO: Proper constructor name
+	
+	StaticAssertDecl.StaticAssertDecl = <_Static_assert(<ConstExp>, <StringConst>);>

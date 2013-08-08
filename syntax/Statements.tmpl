@@ -1,0 +1,38 @@
+templates
+
+	Stm = <<LabeledStm>>
+	Stm = <<CompoundStm>>
+	Stm = <<ExpStm>>
+	Stm = <<SelectionStm>>
+	Stm = <<IterStm>>
+	Stm = <<JmpStm>>
+	
+	LabeledStm.Label   = <<Id> : <Stm>>
+	LabeledStm.Case    = <case <ConstExp> : Stm>
+	LabeledStm.Default = <default : <Stm>>
+	
+	CompoundStm.Block = 
+		<
+			{
+				<BlockItem*; separator="\n">
+			}
+		>
+		
+	BlockItem = <<Decl>>
+	BlockItem = <<Stm>>
+	
+	ExpStm.ExpStm = <<Exp?>;>
+	
+	SelectionStm.If     = <if(<Exp>) <Stm>>
+	SelectionStm.IfElse = <if(<Exp>) <Stm> else <Stm>>
+	SelectionStm.Switch = <switch(<Exp>) <Stm>>
+	
+	IterationStm.While   = <while(<Exp>) <Stm>>
+	IterationStm.Do      = <do <Stm> while(<Exp>)>
+	IterationStm.For     = <for(<Exp?>; <Exp?>; <Exp?>) <Stm>>
+	IterationStm.DeclFor = <for(<Decl> <Exp?>; <Exp?>) <Stm>>
+	
+	JmpStm.Goto     = <goto <Id>;>
+	JmpStm.Continue = <continue;>
+	JmpStm.Break    = <break;>
+	JmpStm.Return   = <return <Exp?>;>
