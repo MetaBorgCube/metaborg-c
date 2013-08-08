@@ -89,13 +89,17 @@ templates
 	
 	Declarator.Declarator = <<Ptr?> <DirectDeclarator>> // TODO: Proper constructor name
 	
+	FuncDeclarator.Declarator = <<Ptr?> <DirectFuncDeclarator>> // TODO: Proper constructor name
+	
 	DirectDeclarator                 = <<Id> >
 	DirectDeclarator                 = <(<Declarator>)> {bracket}
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier*; separator=" "> <AssignExp?>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[static <TypeQualifier*; separator=" "> <AssignExp>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> static <AssignExp>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> *]> // TODO: Give unique constructor name
-	DirectDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamList>)>
+	DirectDeclarator                 = <<DirectFuncDeclarator>>
+	
+	DirectFuncDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamList>)>
 	
 	Ptr.Ptr = <*<TypeQualifier*; separator=" ">>
 	Ptr.Ptr = <*<TypeQualifier*; separator=" "><Ptr>>

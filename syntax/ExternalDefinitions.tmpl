@@ -5,4 +5,7 @@ templates
 	ExternalDecl = <<FuncDef>>
 	ExternalDecl = <<Decl>>
 	
-	FuncDef.FuncDef = <<DeclSpec+; separator=" "> <Declarator> <Decl*; separator=" "> <CompoundStm>>
+	// There should be at least one DeclSpec according to C11 syntax, but old syntax allows none.
+	FuncDef.FuncDef = <<DeclSpec*; separator=" "> <FuncDeclarator> <Decl*; separator=" "> <CompoundStm>> {prefer}
+	FuncDef.FuncDef = <<DeclSpec*; separator=" "> <Declarator> <Decl*; separator=" "> <CompoundStm>> {avoid}
+	
