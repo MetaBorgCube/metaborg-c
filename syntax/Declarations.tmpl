@@ -53,7 +53,8 @@ templates
 		>
 	StructOrUnionSpec.UnionSpec  = <union <Id>>
 	
-	StructDecl.StructDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator*; separator=", ">;>
+	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator+; separator=", ">;> {prefer}
+	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator*; separator=", ">;> {avoid}
 	StructDecl = <<StaticAssertDecl>>
 	
 	SpecifierQualifier = <<TypeSpec>>
