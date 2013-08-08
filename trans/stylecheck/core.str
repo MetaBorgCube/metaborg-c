@@ -1,0 +1,74 @@
+module stylecheck/core
+
+imports
+	
+	include/C
+	lib/editor-common.generated
+	lib/runtime/index/-
+	lib/runtime/nbl/-
+	lib/runtime/editor/-
+	
+strategies
+	
+	style-check = fail
+	style-check-all = alltd(style-check)
+	
+	editor-style-check:
+    (selected, position, ast, path, project-path) -> (filename, messages) 
+    with
+    	editor-init;
+    	index-setup(|<language>, project-path);
+    	<index-clear-partition> STYLE_CHECK_PARTITION();
+    	filename := <guarantee-extension(|"check.aterm")> path;
+      <style-check-all> selected;
+      messages := <retrieve-all-messages>
+       
+rules
+		
+	style-check-uri = language; nabl-base-uri
+
+overlays
+	
+	STYLE_CHECK_PARTITION = "stylecheck"
+	ERROR_KIND = "Error"
+	WARNING_KIND = "Warning"
+	NOTE_KIND = "Note"
+
+signature
+
+	constructors
+		
+		Error   : String * Term * Location -> Message
+		Warning : String * Term * Location -> Message
+		Note    : String * Term * Location -> Message
+
+rules
+	
+	create-message(|term, kind):
+		message -> message
+		with
+			<new-prop(|STYLE_CHECK_PARTITION(), <style-check-uri>, kind, message)> term
+		
+	create-error(|term):
+		message -> msg
+		with
+			msg := Error(message, term, <origin-location-offset> term);
+			<create-message(|term, ERROR_KIND())> msg
+			
+	create-warning(|term):
+		message -> Warning(message, term, <origin-location-offset> term)
+		with
+			msg := Warning(message, term, <origin-location-offset> term);
+			<create-message(|term, WARNING_KIND())> msg
+			
+	create-note(|term):
+		message -> Note(message, term, <origin-location-offset> term)
+		with
+			msg := Note(message, term, <origin-location-offset> term);
+			<create-message(|term, NOTE_KIND())> msg
+	
+rules
+	
+	retrieve-messages(|kind) = style-check-uri; nabl-get-all-properties(|kind)
+	retrieve-all-messages = !(<retrieve-messages(|ERROR_KIND())>, <retrieve-messages(|WARNING_KIND())>, <retrieve-messages(|NOTE_KIND())>)
+			

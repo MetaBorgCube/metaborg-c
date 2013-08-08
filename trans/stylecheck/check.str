@@ -1,0 +1,47 @@
+module stylecheck/check
+
+imports
+	
+	include/C
+	stylecheck/core
+	
+rules // Name checks
+	
+	check-name-gt(|max, kind):
+		name -> name
+		where
+			length := <strlen> name;
+			<gt> (length, max);
+			<create-error(|name)> $[[kind] may not be more than [max] characters long]
+			
+	check-name-lt(|max, kind):
+		name -> name
+		where
+			length := <strlen> name;
+			<lt> (length, max);
+			<create-error(|name)> $[[kind] must be at least [max] characters long]
+
+	check-name-starts-with(|string, kind):
+		name -> name
+		where
+			not(<string-starts-with(|string)> name);
+			<create-error(|name)> $[[kind] must start with the character(s) '[string]']
+
+	check-name-is-uppercase(|index, kind):
+		name -> name
+		where
+			<not(explode-string; index(|index); is-upper)> name;
+			<create-error(|name)> $[Character [index] of a [kind] must be upper case]
+			
+	check-name-is-lowercase(|index, kind):
+		name -> name
+		where
+			<not(explode-string; index(|index); is-lower)> name;
+			<create-error(|name)> $[Character [index] of a [kind] must be lower case]
+
+rules // Ordering checks
+	
+rules // Spacing/tab checks
+	
+rules // Line feed checks
+	

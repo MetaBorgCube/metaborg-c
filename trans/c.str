@@ -6,6 +6,8 @@ imports
   libstratego-aterm
   include/C
   lib/editor-common.generated
+  
+  stylecheck/-
 
 rules // Analysis
   
