@@ -23,7 +23,8 @@ templates
 	
 	ExpStm.ExpStm = <<Exp?>;>
 	
-	SelectionStm.If     = <if(<Exp>) <Stm>>
+	// Prefer If to prevent ambiguity between If and IfElse.
+	SelectionStm.If     = <if(<Exp>) <Stm>> {prefer}
 	SelectionStm.IfElse = <if(<Exp>) <Stm> else <Stm>>
 	SelectionStm.Switch = <switch(<Exp>) <Stm>>
 	
