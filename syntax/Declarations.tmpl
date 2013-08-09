@@ -1,7 +1,8 @@
 templates
 
+	// Prefer so that the name of named parameter declarations are not recognised as a typedef.
 	Decl.Decl = <<DeclSpecs> <InitDeclarator+; separator=", ">;> {prefer}
-	Decl.Decl = <<DeclSpecs> <InitDeclarator*; separator=", ">;> {avoid} // TODO: this changes the meaning of useless declarations.
+	Decl.Decl = <<DeclSpecs> <InitDeclarator*; separator=", ">;>
 	Decl      = <<StaticAssertDecl>>
 	
 	DeclSpec = <<StoreClassSpec>>
@@ -53,8 +54,9 @@ templates
 		>
 	StructOrUnionSpec.UnionSpec  = <union <Id>>
 	
+	// Prefer so that the name of named field declarations are not recognised as a typedef.
 	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator+; separator=", ">;> {prefer}
-	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator*; separator=", ">;> {avoid}
+	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator*; separator=", ">;>
 	StructDecl = <<StaticAssertDecl>>
 	
 	SpecifierQualifier = <<TypeSpec>>
@@ -110,9 +112,10 @@ templates
 	// Prefer over ParamTypeList so that the names in a typeless parameter list do not get treated as TypedefNames.
 	ParamList.ParamList           = <<Id+; separator=", ">> {prefer}
 	ParamList                     = <<ParamTypeList>>
-	
+
+	// Avoid so that the first ParamDecl production is chosen if the declaration has a name.
+	ParamDecl.ParamDecl = <<DeclSpecs> <AbstractDeclarator?>> {avoid}
 	ParamDecl.ParamDecl = <<DeclSpecs> <Declarator>>
-	ParamDecl.ParamDecl = <<DeclSpecs> <AbstractDeclarator?>> {avoid} // TODO: bad?
 	
 	TypeName.TypeName = <<SpecifierQualifier+; separator=" "> <AbstractDeclarator?>>
 	
