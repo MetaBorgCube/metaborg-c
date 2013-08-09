@@ -4,6 +4,11 @@ lexical syntax
   PPToken+              -> PPTokenSeq
   ( [\ \t] | Comment )* -> PPWS
   ( [\n] | EOF )        -> PPNL
+  
+  ~[\>\n]               -> PPHChar
+	~[\"\n]               -> PPQChar
+	"<" PPHChar+ ">"      -> PPHeaderName
+	"\"" PPQChar+ "\""    -> PPHeaderName
 
 lexical restrictions
 
@@ -18,7 +23,7 @@ lexical syntax
   "#" PPWS "elif" PPWS ConstExp PPWS PPNL              -> ControlLine
   "#" PPWS "else" PPWS PPNL                            -> ControlLine
   "#" PPWS "endif" PPWS PPNL                           -> ControlLine
-  "#" PPWS "include" PPWS HeaderName PPWS PPNL         -> ControlLine
+  "#" PPWS "include" PPWS PPHeaderName PPWS PPNL       -> ControlLine
   "#" PPWS "define" PPWS Id PPWS PPTokenSeq? PPWS PPNL -> ControlLine
   "#" PPWS "undef" PPWS Id PPWS PPNL                   -> ControlLine
   "#" PPWS "line" PPWS PPTokenSeq? PPWS PPNL           -> ControlLine

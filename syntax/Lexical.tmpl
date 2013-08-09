@@ -1,10 +1,11 @@
-lexical syntax
+lexical syntax // Layout & Comments
 
 	[\ \t\n\r\12]                   -> LAYOUT
 	"/*" ( ~[\*] | Asterisk )* "*/" -> Comment
 	Comment                         -> LAYOUT
 	[\*]                            -> Asterisk
 	"//" ~[\n]* [\n]                -> Comment
+	[\,]                            -> Comma
 	
 	-> EOF
 
@@ -18,21 +19,7 @@ context-free restrictions
 	LAYOUT? -/- [\ \t\n\r\12]
 	LAYOUT? -/- [\/].[\/]
 	LAYOUT? -/- [\/].[\*]
-
-lexical syntax // Lexical elements
-
-	Keyword    -> Token
-	Identifier -> Token
-	Constant   -> Token
-	StringLit  -> Token
-	Punctuator -> Token
 	
-	HeaderName     -> PPToken
-	Identifier     -> PPToken
-	CharacterConst -> PPToken
-	StringLit      -> PPToken
-	Punctuator     -> PPToken
-	// TODO: each non-white-space character that cannot be one of the above
 	
 lexical syntax // Identifiers
 
@@ -43,101 +30,13 @@ lexical restrictions
   
 	Id -/- [a-zA-Z\_0-9]
 
+
 lexical syntax // Universal character names
 
 	"\\u" HexQuad                       -> UniCharName
 	"\\U" HexQuad HexQuad               -> UniCharName
 	
 	HexDigit HexDigit HexDigit HexDigit -> HexQuad
-
-lexical syntax // Constants
-
-	[a-bA-B\_]  -> Nondigit
-	[0-9]       -> Digit
-	[1-9]       -> NonzeroDigit
-	[0-7]       -> OctalDigit
-	[0-9a-fA-F] -> HexDigit
-	
-	~[\\\'\n] -> Char
-	EscSeq    -> Char
-	~[\\\"\n] -> SChar
-	EscSeq    -> SChar
-	~[\>\n]   -> HChar
-	~[\"\n]   -> QChar
-	
-	[uU]     -> UnsignedSuffix
-	[lL]     -> LongSuffix
-	"ll"     -> LongLongSuffix
-	"LL"     -> LongLongSuffix
-	[flFL]   -> FloatSuffix
-	
-	"0" [Xx] -> HexPrefix
-	[LuU]    -> CharPrefix
-	"u8"     -> EncPrefix
-	[uUL]    -> EncPrefix
-	
-	[\+\-] -> Sign
-	[eE]   -> Exponent
-	[pP]   -> BinExponent
-	
-	[\\\'\\\"\\\?\\\\\\a\\b\\f\\n\\r\\t\\v] -> SimpleEscSeq
-	
-	"["    -> Punctuator
-	"]"    -> Punctuator
-	"("    -> Punctuator
-	")"    -> Punctuator
-	"{"    -> Punctuator
-	"}"    -> Punctuator
-	"."    -> Punctuator
-	"->"   -> Punctuator
-	"++"   -> Punctuator
-	"--"   -> Punctuator
-	"&"    -> Punctuator
-	"*"    -> Punctuator
-	"+"    -> Punctuator
-	"-"    -> Punctuator
-	"~"    -> Punctuator
-	"!"    -> Punctuator
-	"/"    -> Punctuator
-	"%"    -> Punctuator
-	"<<"   -> Punctuator
-	">>"   -> Punctuator
-	"<"    -> Punctuator
-	">"    -> Punctuator
-	"<="   -> Punctuator
-	">="   -> Punctuator
-	"=="   -> Punctuator
-	"!="   -> Punctuator
-	"^"    -> Punctuator
-	"|"    -> Punctuator
-	"&&"   -> Punctuator
-	"||"   -> Punctuator
-	"?"    -> Punctuator
-	":"    -> Punctuator
-	";"    -> Punctuator
-	"..."  -> Punctuator
-	"="    -> Punctuator
-	"*="   -> Punctuator
-	"/="   -> Punctuator
-	"%="   -> Punctuator
-	"+="   -> Punctuator
-	"-="   -> Punctuator
-	"<<="  -> Punctuator
-	">>="  -> Punctuator
-	"&="   -> Punctuator
-	"^="   -> Punctuator
-	"|="   -> Punctuator
-	","    -> Punctuator
-	"#"    -> Punctuator
-	"##"   -> Punctuator
-	"<:"   -> Punctuator
-	":>"   -> Punctuator
-	"<%"   -> Punctuator
-	"%>"   -> Punctuator
-	"%:"   -> Punctuator
-	"%:%:" -> Punctuator
-	
-	[\,] -> Comma
 	
 templates // Constants
 
@@ -151,12 +50,32 @@ templates // Constants
 lexical syntax // Integer constant
 
 	// TODO: IntSuffix should be in AST.
-	[1-9] [0-9]* IntSuffix? -> IntConst
-	[0] IntSuffix?          -> IntConst
+	NonzeroDigit Digit* IntSuffix? -> IntConst
+	Zero IntSuffix?                -> IntConst
+	
+	UnsingedSuffix LongSuffix?    -> IntSuffix
+	UnsignedSuffix LongLongSuffix -> IntSuffix
+	LongSuffix UnsigedSuffix?     -> IntSuffix
+	LongLongSuffix UnsigedSuffix? -> IntSuffix
+	
+	[uU] -> UnsignedSuffix
+	[lL] -> LongSuffix
+	"ll" -> LongLongSuffix
+	"LL" -> LongLongSuffix
+	
+	DigitSeq? "." DigitSeq -> FracConst
+	DigitSeq "."           -> FracConst
+	
+	[0-9] -> Digit
+	[1-9] -> NonzeroDigit
+	[0]   -> Zero
+	
+	Digit+ -> DigitSeq
 	
 lexical restrictions
 
 	IntConst -/- [0-9UuLl]
+
 	
 lexical syntax // Octal constant
 
@@ -165,35 +84,12 @@ lexical syntax // Octal constant
 lexical restrictions
 
 	OctConst   -/- [0-9a-zA-F]
-	
-lexical syntax
 
-	HexPrefix HexDigit -> HexConst
+	
+lexical syntax // Hexadecimal constants
+
+	"0" [Xx] HexDigit -> HexConst
 	HexConst HexDigit  -> HexConst
-	
-	UnsingedSuffix LongSuffix?    -> IntSuffix
-	UnsignedSuffix LongLongSuffix -> IntSuffix
-	LongSuffix UnsigedSuffix?     -> IntSuffix
-	LongLongSuffix UnsigedSuffix? -> IntSuffix
-	
-	DecFloatConst -> FloatConst
-	HexFloatConst -> FloatConst
-	
-	// TODO: ExpPart & FloatSuffix should be in AST.
-	FracConst ExpPart? FloatSuffix? -> DecFloatConst
-	DigitSeq ExpPart FloatSuffix?   -> DecFloatConst
-	
-	// TODO: BinExpPart & FloatSuffix should be in AST.
-	HexPrefix HexFracConst BinExpPart FloatSuffix? -> HexFloatConst
-	HexPrefix HexDigitSeq BinExpPart FloatSuffix?  -> HexFloatConst
-	
-	DigitSeq? "." DigitSeq -> FracConst
-	DigitSeq "."           -> FracConst
-	
-	// TODO: Sign should be in AST.
-	Exponent Sign? DigitSeq -> ExpPart
-	
-	Digit+ -> DigitSeq
 	
 	HexDigitSeq? "." HexDigitSeq -> HexFracConst
 	HexDigitSeq "."              -> HexFracConst
@@ -201,42 +97,65 @@ lexical syntax
 	// TODO: Sign should be in AST.
 	BinExponent Sign? DigitSeq -> BinExpPart
 	
+	[\+\-] -> Sign
+	[pP]   -> BinExponent
+	
+	[0-9a-fA-F] -> HexDigit
+	
 	HexDigit+ -> HexDigitSeq
 
-	// TODO: CharPrefix should be in AST.
-	CharPrefix? "'" CharSeq "'" -> CharConst
+
+lexical syntax // Float constants
+
+	DecFloatConst -> FloatConst
+	HexFloatConst -> FloatConst
 	
-	Char+ -> CharSeq
+	// TODO: ExpPart & FloatSuffix should be in AST.
+	FracConst ExpPart? FloatSuffix? -> DecFloatConst
+	DigitSeq ExpPart FloatSuffix?   -> DecFloatConst
+	
+	// TODO: Sign should be in AST.
+	Exponent Sign? DigitSeq -> ExpPart
+	
+	[eE]   -> Exponent
+	
+	// TODO: BinExpPart & FloatSuffix should be in AST.
+	HexPrefix HexFracConst BinExpPart FloatSuffix? -> HexFloatConst
+	HexPrefix HexDigitSeq BinExpPart FloatSuffix?  -> HexFloatConst
+	
+	[flFL] -> FloatSuffix
+
+lexical syntax // Escape sequences
 	
 	SimpleEscSeq -> EscSeq
 	OctEscSeq    -> EscSeq
 	HexEscSeq    -> EscSeq
 	UniCharName  -> EscSeq
 	
+	[\\\'\\\"\\\?\\\\\\a\\b\\f\\n\\r\\t\\v] -> SimpleEscSeq
+	
 	"\\" OctDigit OctDigit? OctDigit? -> OctEscSeq
 	
 	"\\x" HexDigit+ -> HexEscSeq
-	
-lexical syntax // String literals
 
-	EncPrefix? "\"" SCharSeq? "\"" -> StringConst
-	
-	SChar+ -> SCharSeq
-	
-lexical syntax // Header names
 
-	"<" HCharSeq ">"   -> HeaderName
-	"\"" QCharSeq "\"" -> HeaderName
+lexical syntax // Character constant
 	
-	HChar+ -> HCharSeq
-	QChar+ -> QCharSeq
+	// TODO: CharPrefix should be in AST.
+	[LuU]? "'" Char+ "'" -> CharConst
 	
-lexical syntax // Preprocessing numbers
+	~[\\\'\n] -> Char
+	EscSeq    -> Char
 
-	Digit                  -> PPNum
-	"." Digit              -> PPNum
-	PPNum Digit            -> PPNum
-	PPNum IDNonDigit       -> PPNum
-	PPNum Exponent Sign    -> PPNum
-	PPNum BinExponent Sign -> PPNum
-	PPNum "."              -> PPNum
+
+lexical syntax // String constant
+
+	// TODO: EncPrefix should be in AST.
+	EncPrefix? "\"" SChar* "\"" -> StringConst
+	
+	"u8"  -> EncPrefix
+	[uUL] -> EncPrefix
+	
+	~[\\\"\n] -> SChar
+	EscSeq    -> SChar
+	

@@ -22,7 +22,7 @@ imports
     ExternalDefinitionsgenerated
     Keywordsgenerated
     Lexicalgenerated
-    PreprocessingDirectivesgenerated
+    Preprocessorgenerated
     Statementsgenerated
 
 hiddens
