@@ -107,7 +107,8 @@ templates
 	ParamTypeList.ParamTypeList   = <<ParamDecl*; separator=", ">>
 	ParamTypeList.ParamTypeVararg = <<ParamDecl+; separator=", ">, ...>
 	
-	ParamList.ParamList           = <<Id+; separator=", ">>
+	// Prefer over ParamTypeList so that the names in a typeless parameter list do not get treated as TypedefNames.
+	ParamList.ParamList           = <<Id+; separator=", ">> {prefer}
 	ParamList                     = <<ParamTypeList>>
 	
 	ParamDecl.ParamDecl = <<DeclSpecs> <Declarator>>
