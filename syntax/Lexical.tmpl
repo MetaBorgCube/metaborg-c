@@ -5,7 +5,6 @@ lexical syntax // Layout & Comments
 	Comment                         -> LAYOUT
 	[\*]                            -> Asterisk
 	"//" ~[\n]* [\n]                -> Comment
-	[\,]                            -> Comma
 	
 	-> EOF
 
@@ -20,7 +19,13 @@ context-free restrictions
 	LAYOUT? -/- [\/].[\/]
 	LAYOUT? -/- [\/].[\*]
 	
+
+lexical syntax // Common
+
+	[\,]   -> Comma
+	[\+\-] -> Sign
 	
+
 lexical syntax // Identifiers
 
 	([a-zA-Z\_]|UniCharName) ([a-zA-Z\_0-9]|UniCharName)* -> Id
@@ -63,9 +68,6 @@ lexical syntax // Integer constant
 	"ll" -> LongLongSuffix
 	"LL" -> LongLongSuffix
 	
-	DigitSeq? "." DigitSeq -> FracConst
-	DigitSeq "."           -> FracConst
-	
 	[0-9] -> Digit
 	[1-9] -> NonzeroDigit
 	[0]   -> Zero
@@ -74,7 +76,7 @@ lexical syntax // Integer constant
 	
 lexical restrictions
 
-	IntConst -/- [0-9UuLl]
+	IntConst -/- [0-9ulUL]
 
 	
 lexical syntax // Octal constant
@@ -83,27 +85,27 @@ lexical syntax // Octal constant
 	
 lexical restrictions
 
-	OctConst   -/- [0-9a-zA-F]
+	OctConst -/- [0-7]
 
 	
 lexical syntax // Hexadecimal constants
 
-	"0" [Xx] HexDigit -> HexConst
+	"0" HexPrefix HexDigit -> HexConst
 	HexConst HexDigit  -> HexConst
 	
-	HexDigitSeq? "." HexDigitSeq -> HexFracConst
-	HexDigitSeq "."              -> HexFracConst
+	[Xx] -> HexPrefix
 	
 	// TODO: Sign should be in AST.
-	BinExponent Sign? DigitSeq -> BinExpPart
-	
-	[\+\-] -> Sign
-	[pP]   -> BinExponent
+	[pP] Sign? DigitSeq -> BinExpPart
 	
 	[0-9a-fA-F] -> HexDigit
 	
 	HexDigit+ -> HexDigitSeq
 
+lexical restrictions
+
+	HexConst  -/- [0-9a-fA-FxX]
+	
 
 lexical syntax // Float constants
 
@@ -114,16 +116,25 @@ lexical syntax // Float constants
 	FracConst ExpPart? FloatSuffix? -> DecFloatConst
 	DigitSeq ExpPart FloatSuffix?   -> DecFloatConst
 	
-	// TODO: Sign should be in AST.
-	Exponent Sign? DigitSeq -> ExpPart
+	DigitSeq? "." DigitSeq -> FracConst
+	DigitSeq "."           -> FracConst
 	
-	[eE]   -> Exponent
+	// TODO: Sign should be in AST.
+	[eE] Sign? DigitSeq -> ExpPart
 	
 	// TODO: BinExpPart & FloatSuffix should be in AST.
 	HexPrefix HexFracConst BinExpPart FloatSuffix? -> HexFloatConst
 	HexPrefix HexDigitSeq BinExpPart FloatSuffix?  -> HexFloatConst
 	
+	HexDigitSeq? "." HexDigitSeq -> HexFracConst
+	HexDigitSeq "."              -> HexFracConst
+	
 	[flFL] -> FloatSuffix
+	
+lexical restrictions
+
+	FloatConst -/- [0-9a-fA-FxXflFL]
+
 
 lexical syntax // Escape sequences
 	
@@ -132,11 +143,11 @@ lexical syntax // Escape sequences
 	HexEscSeq    -> EscSeq
 	UniCharName  -> EscSeq
 	
-	[\\\'\\\"\\\?\\\\\\a\\b\\f\\n\\r\\t\\v] -> SimpleEscSeq
+	[\\] [abfnrtv\\\?\"] -> SimpleEscSeq
 	
-	"\\" OctDigit OctDigit? OctDigit? -> OctEscSeq
+	[\\] OctDigit OctDigit? OctDigit? -> OctEscSeq
 	
-	"\\x" HexDigit+ -> HexEscSeq
+	[\\] "x" HexDigit+ -> HexEscSeq
 
 
 lexical syntax // Character constant
