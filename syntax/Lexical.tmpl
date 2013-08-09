@@ -37,6 +37,7 @@ lexical syntax // Lexical elements
 lexical syntax // Identifiers
 
 	([a-zA-Z\_]|UniCharName) ([a-zA-Z\_0-9]|UniCharName)* -> Id
+	Keyword                                               -> Id {reject}
 	
 lexical restrictions
   
