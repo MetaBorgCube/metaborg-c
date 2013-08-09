@@ -33,6 +33,13 @@ templates
 	UnaryOp.BNot  = <~>
 	UnaryOp.LNot  = <!>
 	
+lexical restrictions
+
+  "+" -/- [\+]
+  "-" -/- [\-]
+    
+templates
+	
 	CastExp      = <<UnaryExp>>
 	CastExp.Cast = <(<TypeName>)<CastExp>>
 	
@@ -89,10 +96,22 @@ templates
 	
 	LAndOp.LAnd = <&&>
 	
+lexical restrictions
+
+	"&" -/- [\&]
+	
+templates
+	
 	LOrExp       = <<LAndExp>>
 	LOrExp.BinOp = <<LOrExp> <LOrOp> <LAndExp>>
 	
 	LOrOp.LOr = <||>
+	
+lexical restrictions
+
+	"|" -/- [\|]
+	
+templates
 	
 	CondExp       = <<LOrExp>>
 	CondExp.IfExp = <<LOrExp> ? <Exp> : <CondExp>>
