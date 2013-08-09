@@ -101,11 +101,13 @@ templates
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[static <TypeQualifier*; separator=" "> <AssignExp>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> static <AssignExp>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> *]> // TODO: Give unique constructor name
-	DirectDeclarator                 = <<DirectDeclarator>(<ParamList>)>
+	DirectDeclarator                 = <<DirectFuncDeclarator>>
 	
 	FuncDeclarator.Declarator = <<Ptr?> <DirectFuncDeclarator>> // TODO: Proper constructor name
 	
-	DirectFuncDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamList>)>
+	// Prefer over ParamTypeList so that the names in a typeless parameter list do not get treated as TypedefNames.
+	DirectFuncDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamList>)> {prefer}
+	DirectFuncDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamTypeList>)>
 	
 	Ptr.Ptr = <*<TypeQualifier*; separator=" ">>
 	Ptr.Ptr = <*<TypeQualifier*; separator=" "><Ptr>>
@@ -113,9 +115,7 @@ templates
 	ParamTypeList.ParamTypeList   = <<ParamDecl*; separator=", ">>
 	ParamTypeList.ParamTypeVararg = <<ParamDecl+; separator=", ">, ...>
 	
-	// Prefer over ParamTypeList so that the names in a typeless parameter list do not get treated as TypedefNames.
-	ParamList.ParamList           = <<Id+; separator=", ">> {prefer}
-	ParamList                     = <<ParamTypeList>>
+	ParamList.ParamList           = <<Id+; separator=", ">>
 
 	// Avoid so that the first ParamDecl production is chosen if the declaration has a name.
 	ParamDecl.ParamDecl = <<DeclSpecs> <AbstractDeclarator?>> {avoid}
@@ -131,7 +131,7 @@ templates
 	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[static <TypeQualifier*; separator=" "> <AssignExp>]> // TODO: Give unique constructor name
 	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[<TypeQualifier+; separator=" "> static <AssignExp>]> // TODO: Give unique constructor name
 	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[*]> // TODO: Give unique constructor name
-	DirectAbstractDeclarator.FuncADeclarator = <<DirectAbstractDeclarator?>(<ParamTypeList>)>
+	DirectAbstractDeclarator.FuncADeclarator  = <<DirectAbstractDeclarator?>(<ParamTypeList>)>
 	
 	Initializer.Initializer = <<AssignExp>>
 	Initializer.Initializer = <{<DesignationInit+; separator=", "><Comma?>}>
