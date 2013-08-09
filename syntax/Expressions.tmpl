@@ -14,8 +14,8 @@ templates
 	PostfixExp             = <<PrimExp>>
 	PostfixExp.ArrayAccess = <<PostfixExp>[<Exp>]>
 	PostfixExp.Call        = <<PostfixExp>(<AssignExp*; separator=", ">)>
-	PostfixExp.Access      = <<PostfixExp>.Id>
-	PostfixExp.PtrAccess   = <<PostfixExp>-\>Id>
+	PostfixExp.Access      = <<PostfixExp>.<Id>>
+	PostfixExp.DerefAccess = <<PostfixExp>-\><Id>>
 	PostfixExp.PostInc     = <<PostfixExp>++>
 	PostfixExp.PostDec     = <<PostfixExp>-->
 	
@@ -32,7 +32,7 @@ templates
 	UnaryOp.Pos   = <+>
 	UnaryOp.Neg   = <->
 	UnaryOp.BNot  = <~>
-	UnaryOp.LNot  = <~>
+	UnaryOp.LNot  = <!>
 	
 	CastExp      = <<UnaryExp>>
 	CastExp.Cast = <(<TypeName>)<CastExp>>
