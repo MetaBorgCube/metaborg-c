@@ -133,10 +133,13 @@ templates
 	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[*]> // TODO: Give unique constructor name
 	DirectAbstractDeclarator.FuncADeclarator  = <<DirectAbstractDeclarator?>(<ParamTypeList>)>
 	
-	Initializer.Initializer = <<AssignExp>>
+	Initializer             = <<AssignExp>>
 	Initializer.Initializer = <{<DesignationInit+; separator=", "><Comma?>}>
 	
-	DesignationInit.DesignationInit = <<Designator+; separator=" "> = <Init>> // TODO: Proper constructor name
+	DesignationInit                 = <<Initializer>> 
+	DesignationInit.DesignationInit = <<Designation> <Initializer>> // TODO: Proper constructor name
+	
+	Designation.Designation = <<Designator+; separator=" "> = >  // TODO: Proper constructor name
 	
 	Designator.Designator = <[<ConstExp>]> // TODO: Proper constructor name
 	Designator.Designator = <.<Id>> // TODO: Proper constructor name
