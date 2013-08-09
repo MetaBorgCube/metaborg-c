@@ -1,43 +1,30 @@
 lexical syntax
 
-  ~[\ \t\n\/]                           -> TokenChar
-  TokenChar+                            -> Token
-  ( [\ \t] | ( [\\] [\n] ) | Comment )+ -> TokWS
-  ( [\ \t] | Comment )*                 -> WS
-  {Token TokWS}+                        -> TokenSeq
+  ~[\n\/]               -> PPToken
+  PPToken+              -> PPTokenSeq
+  ( [\ \t] | Comment )* -> PPWS
+  ( [\n] | EOF )        -> PPNL
 
 lexical restrictions
 
-  Token    -/- ~[\ \t\n\/]
-  TokenSeq -/- ~[\ \t\n]
-  WS       -/- [\ \t]
+  PPTokenSeq -/- ~[\n\/]
+  PPWS       -/-  [\ \t]
 	
 lexical syntax
 
-  "#" WS "define" WS TokenSeq [\n] -> ControlLine
-  "#" WS "undef" WS Id WS [\n]     -> ControlLine
-  
-  "#" WS "include" WS HeaderName WS [\n] -> ControlLine
-  
-  "#" WS "line" WS [0-9]+ WS ( "\"" WS FileName WS "\"" )? WS [\n] -> ControlLine
-  "#" WS IntConst WS "\"" FileName "\"" WS {LineFlag [\ ]+}* [\n]  -> ControlLine
- 
-  "#" WS "error" WS TokenSeq? WS [\n]                              -> ControlLine
-  "#" WS "pragma" WS TokenSeq? WS [\n]                             -> ControlLine
-
-  "1" -> LineFlag
-  "2" -> LineFlag
-  "3" -> LineFlag
-  "4" -> LineFlag
-  
-  "#" WS "if" WS ConstExp WS [\n]                                  -> ControlLine
-  "#" WS "if" WS Id WS [\n]                                        -> ControlLine
-  "#" WS "if" WS Id WS "!=" WS [0-9]+ WS [\n]                      -> ControlLine
-  "#" WS "ifdef" WS Id WS [\n]                                     -> ControlLine
-  "#" WS "ifndef" WS Id WS [\n]                                    -> ControlLine
-  "#" WS "elif" WS ConstExp WS [\n]                                -> ControlLine
-  "#" WS "else" WS [\n]                                            -> ControlLine
-  "#" WS "endif" WS [\n]                                           -> ControlLine
+  "#" PPWS "if" PPWS ConstExp PPWS PPNL                -> ControlLine
+  "#" PPWS "ifdef" PPWS Id PPWS PPNL                   -> ControlLine
+  "#" PPWS "ifndef" PPWS Id PPWS PPNL                  -> ControlLine
+  "#" PPWS "elif" PPWS ConstExp PPWS PPNL              -> ControlLine
+  "#" PPWS "else" PPWS PPNL                            -> ControlLine
+  "#" PPWS "endif" PPWS PPNL                           -> ControlLine
+  "#" PPWS "include" PPWS HeaderName PPWS PPNL         -> ControlLine
+  "#" PPWS "define" PPWS Id PPWS PPTokenSeq? PPWS PPNL -> ControlLine
+  "#" PPWS "undef" PPWS Id PPWS PPNL                   -> ControlLine
+  "#" PPWS "line" PPWS PPTokenSeq? PPWS PPNL           -> ControlLine
+  "#" PPWS "error" PPWS PPTokenSeq? PPWS PPNL          -> ControlLine
+  "#" PPWS "pragma" PPWS PPTokenSeq? PPWS PPNL         -> ControlLine
+  "#" PPWS PPNL                                        -> ControlLine
 
 templates
 
