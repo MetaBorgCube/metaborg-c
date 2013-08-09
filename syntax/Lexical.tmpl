@@ -140,27 +140,26 @@ lexical syntax // Constants
 	
 templates // Constants
 
+	Constant.CharConst   = <<CharConst>>
 	Constant.IntConst    = <<IntConst>>
-	Constant.FloatConst  = <<FloatConst>>
 	Constant.OctConst    = <<OctConst>>
 	Constant.HexConst    = <<HexConst>>
-	Constant.CharConst   = <<CharConst>>
+	Constant.FloatConst  = <<FloatConst>>
+	Constant.StringConst = <<StringConst>>
 
-lexical syntax // Constants
+lexical syntax // Integer constant
 
 	// TODO: IntSuffix should be in AST.
-	[1-9][0-9]* IntSuffix? -> IntConst
-	"0" IntSuffix?         -> IntConst
-	OctConst IntSuffix?    -> IntConst
-	HexConst IntSuffix?    -> IntConst
+	[1-9] [0-9]* IntSuffix? -> IntConst
+	[0] IntSuffix?          -> IntConst
 	
 lexical restrictions
 
-	IntConst   -/- [0-9UuLl]
+	IntConst -/- [0-9UuLl]
 	
-lexical syntax
+lexical syntax // Octal constant
 
-	"0" [0-7]+ -> OctConst // TODO: This does not seem correct wrt C syntax.
+	[0] [0-7]+ -> OctConst
 	
 lexical restrictions
 

@@ -2,9 +2,8 @@ templates
 
 	PrimExp.Id          = <<Id>>
 	PrimExp             = <<Constant>>
-	PrimExp.StringConst = <<StringConst>>
-	PrimExp             = <(<Exp>)> {bracket}
 	PrimExp             = <<GenSelect>>
+	PrimExp             = <(<Exp>)> {bracket}
 	
 	GenSelect.GenSelect = <_Generic(<AssignExp>, <GenAssoc+; separator=", ">)>
 	
