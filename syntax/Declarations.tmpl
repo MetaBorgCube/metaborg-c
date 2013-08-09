@@ -55,15 +55,19 @@ templates
 	StructOrUnionSpec.UnionSpec  = <union <Id>>
 	
 	// Prefer so that the name of named field declarations are not recognised as a typedef.
+	// Also prefer StructDeclarator over StructBitfieldDeclarator for the same reason.
 	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator+; separator=", ">;> {prefer}
-	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructDeclarator*; separator=", ">;>
+	StructDecl.FieldDecl = <<SpecifierQualifier+; separator=" "> <StructBitfieldDeclarator*; separator=", ">;>
 	StructDecl = <<StaticAssertDecl>>
 	
 	SpecifierQualifier = <<TypeSpec>>
 	SpecifierQualifier = <<TypeQualifier>>
 	
-	StructDeclarator = <<Declarator>>
-	StructDeclarator = <<Declarator?> : <ConstExp>>
+	StructDeclarator          = <<Declarator>>
+	StructDeclarator.Bitfield = <<Declarator> : <ConstExp>>
+	
+	StructBitfieldDeclarator.Bitfield = < : <ConstExp>>
+	StructBitfieldDeclarator          = <<Declarator>>
 	
 	EnumSpec.EnumSpec = 
 		<
@@ -91,15 +95,15 @@ templates
 	
 	Declarator.Declarator = <<Ptr?> <DirectDeclarator>> // TODO: Proper constructor name
 	
-	FuncDeclarator.Declarator = <<Ptr?> <DirectFuncDeclarator>> // TODO: Proper constructor name
-	
 	DirectDeclarator                 = <<Id> >
 	DirectDeclarator                 = <(<Declarator>)> {bracket}
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier*; separator=" "> <AssignExp?>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[static <TypeQualifier*; separator=" "> <AssignExp>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> static <AssignExp>]> // TODO: Give unique constructor name
 	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<TypeQualifier+; separator=" "> *]> // TODO: Give unique constructor name
-	DirectDeclarator                 = <<DirectFuncDeclarator>>
+	DirectDeclarator                 = <<DirectDeclarator>(<ParamList>)>
+	
+	FuncDeclarator.Declarator = <<Ptr?> <DirectFuncDeclarator>> // TODO: Proper constructor name
 	
 	DirectFuncDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamList>)>
 	
