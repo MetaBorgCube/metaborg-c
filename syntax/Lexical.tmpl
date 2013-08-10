@@ -81,7 +81,9 @@ lexical restrictions
 	
 lexical syntax // Octal constant
 
-	[0] [0-7]+ -> OctConst
+	Zero OctDigit+ -> OctConst
+	
+	[0-7] -> OctDigit
 	
 lexical restrictions
 
@@ -90,13 +92,9 @@ lexical restrictions
 	
 lexical syntax // Hexadecimal constants
 
-	"0" HexPrefix HexDigit -> HexConst
-	HexConst HexDigit  -> HexConst
+	Zero HexPrefix HexDigitSeq -> HexConst
 	
 	[Xx] -> HexPrefix
-	
-	// TODO: Sign should be in AST.
-	[pP] Sign? DigitSeq -> BinExpPart
 	
 	[0-9a-fA-F] -> HexDigit
 	
@@ -121,6 +119,7 @@ lexical syntax // Float constants
 	
 	// TODO: Sign should be in AST.
 	[eE] Sign? DigitSeq -> ExpPart
+	[pP] Sign? DigitSeq -> BinExpPart
 	
 	// TODO: BinExpPart & FloatSuffix should be in AST.
 	HexPrefix HexFracConst BinExpPart FloatSuffix? -> HexFloatConst
@@ -143,11 +142,11 @@ lexical syntax // Escape sequences
 	HexEscSeq    -> EscSeq
 	UniCharName  -> EscSeq
 	
-	[\\] [abfnrtv\\\?\"] -> SimpleEscSeq
+	[\\] [\'\"\?\\abfnrtv] -> SimpleEscSeq
 	
 	[\\] OctDigit OctDigit? OctDigit? -> OctEscSeq
 	
-	[\\] "x" HexDigit+ -> HexEscSeq
+	[\\] HexPrefix HexDigit+ -> HexEscSeq
 
 
 lexical syntax // Character constant
