@@ -35,13 +35,6 @@ lexical restrictions
   
 	Id -/- [a-zA-Z\_0-9]
 
-
-lexical syntax // Universal character names
-
-	"\\u" HexQuad                       -> UniCharName
-	"\\U" HexQuad HexQuad               -> UniCharName
-	
-	HexDigit HexDigit HexDigit HexDigit -> HexQuad
 	
 templates // Constants
 
@@ -51,12 +44,13 @@ templates // Constants
 	Constant.HexConst    = <<HexConst>>
 	Constant.FloatConst  = <<FloatConst>>
 	Constant.StringConst = <<StringConst>>
+	
 
 lexical syntax // Integer constant
 
 	// TODO: IntSuffix should be in AST.
 	NonzeroDigit Digit* IntSuffix? -> IntConst
-	Zero IntSuffix?                -> IntConst
+	[0] IntSuffix?                 -> IntConst
 	
 	UnsingedSuffix LongSuffix?    -> IntSuffix
 	UnsignedSuffix LongLongSuffix -> IntSuffix
@@ -70,20 +64,16 @@ lexical syntax // Integer constant
 	
 	[0-9] -> Digit
 	[1-9] -> NonzeroDigit
-	[0]   -> Zero
-	
-	Digit+ -> DigitSeq
 	
 lexical restrictions
 
 	IntConst -/- [0-9ulUL]
 
-	
+
 lexical syntax // Octal constant
 
-	Zero OctDigit+ -> OctConst
-	
-	[0-7] -> OctDigit
+	[0] OctDigit+ -> OctConst
+	[0-7]         -> OctDigit
 	
 lexical restrictions
 
@@ -92,13 +82,9 @@ lexical restrictions
 	
 lexical syntax // Hexadecimal constants
 
-	Zero HexPrefix HexDigitSeq -> HexConst
-	
-	[Xx] -> HexPrefix
-	
-	[0-9a-fA-F] -> HexDigit
-	
-	HexDigit+ -> HexDigitSeq
+	[0] HexPrefix HexDigit+ -> HexConst
+	[Xx]                    -> HexPrefix
+	[0-9a-fA-F]             -> HexDigit
 
 lexical restrictions
 
@@ -112,21 +98,21 @@ lexical syntax // Float constants
 	
 	// TODO: ExpPart & FloatSuffix should be in AST.
 	FracConst ExpPart? FloatSuffix? -> DecFloatConst
-	DigitSeq ExpPart FloatSuffix?   -> DecFloatConst
+	Digit+    ExpPart FloatSuffix?  -> DecFloatConst
 	
-	DigitSeq? "." DigitSeq -> FracConst
-	DigitSeq "."           -> FracConst
+	Digit* "." Digit+ -> FracConst
+	Digit+ "."        -> FracConst
 	
 	// TODO: Sign should be in AST.
-	[eE] Sign? DigitSeq -> ExpPart
-	[pP] Sign? DigitSeq -> BinExpPart
+	[eE] Sign? Digit+ -> ExpPart
+	[pP] Sign? Digit+ -> BinExpPart
 	
 	// TODO: BinExpPart & FloatSuffix should be in AST.
 	HexPrefix HexFracConst BinExpPart FloatSuffix? -> HexFloatConst
-	HexPrefix HexDigitSeq BinExpPart FloatSuffix?  -> HexFloatConst
+	HexPrefix HexDigit+    BinExpPart FloatSuffix? -> HexFloatConst
 	
-	HexDigitSeq? "." HexDigitSeq -> HexFracConst
-	HexDigitSeq "."              -> HexFracConst
+	HexDigit* "." HexDigit+ -> HexFracConst
+	HexDigit+ "."           -> HexFracConst
 	
 	[flFL] -> FloatSuffix
 	
@@ -135,37 +121,35 @@ lexical restrictions
 	FloatConst -/- [0-9a-fA-FxXflFL]
 
 
+lexical syntax // Universal character names
+
+	"\\u" HexQuad                       -> UniCharName
+	"\\U" HexQuad HexQuad               -> UniCharName
+	HexDigit HexDigit HexDigit HexDigit -> HexQuad
+
+
 lexical syntax // Escape sequences
 	
-	SimpleEscSeq -> EscSeq
-	OctEscSeq    -> EscSeq
-	HexEscSeq    -> EscSeq
-	UniCharName  -> EscSeq
+	[\\] [\'\"\?\\abfnrtv]            -> EscSeq
+	[\\] OctDigit OctDigit? OctDigit? -> EscSeq
+	[\\] HexPrefix HexDigit+          -> EscSeq
+	UniCharName                       -> EscSeq
 	
-	[\\] [\'\"\?\\abfnrtv] -> SimpleEscSeq
-	
-	[\\] OctDigit OctDigit? OctDigit? -> OctEscSeq
-	
-	[\\] HexPrefix HexDigit+ -> HexEscSeq
-
 
 lexical syntax // Character constant
 	
 	// TODO: CharPrefix should be in AST.
 	[LuU]? "'" Char+ "'" -> CharConst
-	
-	~[\\\'\n] -> Char
-	EscSeq    -> Char
+	~[\\\'\n]            -> Char
+	EscSeq               -> Char
 
 
 lexical syntax // String constant
 
 	// TODO: EncPrefix should be in AST.
 	EncPrefix? "\"" SChar* "\"" -> StringConst
-	
-	"u8"  -> EncPrefix
-	[uUL] -> EncPrefix
-	
-	~[\\\"\n] -> SChar
-	EscSeq    -> SChar
+	"u8"                        -> EncPrefix
+	[uUL]                       -> EncPrefix
+	~[\\\"\n]                   -> SChar
+	EscSeq                      -> SChar
 	
