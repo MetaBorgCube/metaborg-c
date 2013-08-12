@@ -5,6 +5,13 @@ imports C-Builders.generated
 builders
 
   provider : include/c.ctree
-  observer : editor-analyze
-  builder  : "Show abstract syntax" = debug-generate-aterm (openeditor) (realtime) (meta) (source)
-  builder  : "Pretty print" = debug-pretty-print (realtime) (meta) (source)
+  
+  observer : editor-analyze (multifile)
+  
+  builder  : "Show abstract syntax"   = debug-show-aterm (openeditor) (realtime) (meta) (source)                     
+  builder  : "Show analyzed syntax"   = debug-show-analyzed (openeditor) (realtime) (meta)
+  builder  : "Show index (current)"   = debug-show-index-current (openeditor) (meta)
+  builder  : "Show index (all)"       = debug-show-index-all (openeditor) (meta)
+  builder  : "Show tasks (selection)" = debug-show-tasks-selection (openeditor) (meta)
+  builder  : "Show tasks (partition)" = debug-show-tasks-partition (openeditor) (meta)
+  builder  : "Reset and reanalyze"    = debug-reanalyze (meta)

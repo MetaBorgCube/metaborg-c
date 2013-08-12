@@ -1,0 +1,13 @@
+module desugar
+
+imports
+	
+	include/C
+	
+strategies
+	
+	desugar-all = topdown(try(desugar))
+	
+rules
+	
+	desugar = fail
