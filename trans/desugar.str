@@ -6,7 +6,7 @@ imports
 	
 strategies
 	
-	desugar-all = topdown(try(desugar)); topdown(try(concat))
+	desugar-all = topdown(try(desugar)); topdown(try(flatten-list))
 	
 rules
 	
@@ -40,13 +40,32 @@ rules
 		
 	desugar = desugar-declarations
 	desugar-declarations:
-		Decl(decl-spec*, decl*) -> <map(!Decl(decl-spec'*, <id>))> decl*
+		Decl(decl-spec*, decl*) -> decl2*
 		where
 			<not(?[])> decl*;
-			decl-spec'* := <desugar-default-decl-spec> decl-spec*
+			decl-spec'* := <desugar-default-decl-spec> decl-spec*;
+			decl1*      := <map(!Decl(decl-spec'*, <id>))> decl*;
+			decl2*      := <mapconcat(desugar-init)> decl1*
 			
 	desugar-declarations:
-		FieldDecl(decl-spec*, decl*) -> <map(!FieldDecl(decl-spec'*, <id>))> decl*
+		FieldDecl(decl-spec*, decl*) -> decl2*
 		where
 			<not(?[])> decl*;
-			decl-spec'* := <desugar-default-decl-spec> decl-spec*
+			decl-spec'* := <desugar-default-decl-spec> decl-spec*;
+			decl1*      := <map(!Decl(decl-spec'*, <id>))> decl*;
+			decl2*      := <mapconcat(desugar-init)> decl1*
+			
+	desugar-init:
+		Decl(decl-spec*, Init(decl@Declarator(_, name), exp)) -> [Decl(decl-spec*, decl), AssignExp(DeclRef(name), Eq(), exp)]
+		
+	desugar-init:
+		Decl(_, Declarator(_, _)) -> [<id>]
+
+	desugar:
+		ExpStm(Some(stm)) -> stm
+
+	desugar:
+		ExpStm(None()) -> []
+		
+	desugar:
+		Some(s) -> s
