@@ -1,0 +1,137 @@
+templates
+
+	PrimExp.Id          = <<Id>>
+	PrimExp             = <<Constant>>
+	PrimExp             = <<GenSelect>>
+	PrimExp             = <(<Exp>)> {bracket}
+	
+	GenSelect.GenSelect = <_Generic(<AssignExp>, <GenAssoc+; separator=", ">)>
+	
+	GenAssoc.GenTypeAssoc    = <<TypeName> : <AssignExp>>
+	GenAssoc.GenDefaultAssoc = <default : <AssignExp>>
+	
+	PostfixExp             = <<PrimExp>>
+	PostfixExp.ArrayAccess = <<PostfixExp>[<Exp>]>
+	PostfixExp.Call        = <<PostfixExp>(<AssignExp*; separator=", ">)>
+	PostfixExp.Access      = <<PostfixExp>.<Id>>
+	PostfixExp.DerefAccess = <<PostfixExp>-\><Id>>
+	PostfixExp.PostInc     = <<PostfixExp>++>
+	PostfixExp.PostDec     = <<PostfixExp>-->
+	
+	UnaryExp            = <<PostfixExp>>
+	UnaryExp.PreInc     = <++<UnaryExp>>
+	UnaryExp.PreDec     = <--<UnaryExp>>
+	UnaryExp.UnaryOp    = <<UnaryOp><CastExp>>
+	UnaryExp.ExpSizeof  = <sizeof<UnaryExp>>
+	UnaryExp.TypeSizeof = <sizeof(<TypeName>)>
+	UnaryExp.Alignof    = <_Alignof(<TypeName>)>
+
+	UnaryOp.Ref   = <&>
+	UnaryOp.Deref = <*>
+	UnaryOp.Pos   = <+>
+	UnaryOp.Neg   = <->
+	UnaryOp.BNot  = <~>
+	UnaryOp.LNot  = <!>
+	
+lexical restrictions
+
+  "+" -/- [\+]
+  "-" -/- [\-]
+    
+templates
+	
+	CastExp      = <<UnaryExp>>
+	CastExp.Cast = <(<TypeName>)<CastExp>>
+	
+	MulExp       = <<CastExp>>
+	MulExp.BinOp = <<MulExp> <MulOp> <CastExp>>
+	
+	MulOp.Mul = <*>
+	MulOp.Div = </>
+	MulOp.Mod = <%>
+	
+	AddExp       = <<MulExp>>
+	AddExp.BinOp = <<AddExp> <AddOp> <MulExp>>
+	
+	AddOp.Add = <+>
+	AddOp.Sub = <->
+	
+	ShiftExp       = <<AddExp>>
+	ShiftExp.BinOp = <<ShiftExp> <ShiftOp> <AddExp>>
+	
+	ShiftOp.LShift = <\<\<>
+	ShiftOp.RShift = <\>\>>
+	
+	RelExp       = <<ShiftExp>>
+	RelExp.BinOp = <<RelExp> <RelOp> <ShiftExp>>
+	
+	RelOp.Lt  = <\<>
+	RelOp.Gt  = <\>>
+	RelOp.Lte = <\<=>
+	RelOp.Gte = <\>=>
+	
+	EqExp       = <<RelExp>>
+	EqExp.BinOp = <<EqExp> <EqOp> <RelExp>>
+	
+	EqOp.Eq  = <==>
+	EqOp.Neq = <!=>
+	
+	BAndExp       = <<EqExp>>
+	BAndExp.BinOp = <<BAndExp> <BAndOp> <EqExp>>
+	
+	BAndOp.BAnd = <&>
+	
+	BXorExp       = <<BAndExp>>
+	BXorExp.BinOp = <<BXorExp> <BXorOp> <BAndExp>>
+	
+	BXorOp.BXor = <^>
+	
+	BOrExp       = <<BXorExp>>
+	BOrExp.BinOp = <<BOrExp> <BOrOp> <BXorExp>>
+	
+	BOrOp.BOr = <|>
+	
+	LAndExp       = <<BOrExp>>
+	LAndExp.BinOp = <<LAndExp> <LAndOp> <BOrExp>>
+	
+	LAndOp.LAnd = <&&>
+	
+lexical restrictions
+
+	"&" -/- [\&]
+	
+templates
+	
+	LOrExp       = <<LAndExp>>
+	LOrExp.BinOp = <<LOrExp> <LOrOp> <LAndExp>>
+	
+	LOrOp.LOr = <||>
+	
+lexical restrictions
+
+	"|" -/- [\|]
+	
+templates
+	
+	CondExp       = <<LOrExp>>
+	CondExp.IfExp = <<LOrExp> ? <Exp> : <CondExp>>
+	
+	AssignExp           = <<CondExp>>
+	AssignExp.AssignExp = <<UnaryExp> <AssignOp> <AssignExp>>
+	
+	AssignOp.Eq     = <=>
+	AssignOp.Mul    = <*=>
+	AssignOp.Div    = </=>
+	AssignOp.Mod    = <%=>
+	AssignOp.Add    = <+=>
+	AssignOp.Sub    = <-=>
+	AssignOp.LShift = <\<\<=>
+	AssignOp.RShift = <\>\>=>
+	AssignOp.BAnd   = <&=>
+	AssignOp.BXor   = <^=>
+	AssignOp.BOr    = <|=>
+
+	Exp       = <<AssignExp>>
+	Exp.Comma = <<Exp>, <AssignExp>>
+	
+	ConstExp = <<CondExp>>
