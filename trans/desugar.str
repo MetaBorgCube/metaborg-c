@@ -6,8 +6,47 @@ imports
 	
 strategies
 	
-	desugar-all = topdown(try(desugar))
+	desugar-all = topdown(try(desugar)); topdown(try(concat))
 	
 rules
 	
-	desugar = fail
+	desugar = desugar-fun-def
+	desugar-fun-def:
+		FuncDef(decl-spec*, decl, decl*, block) -> FuncDef(decl-spec'*, decl', [], block)
+		with
+			decl-spec'* := <desugar-default-decl-spec> decl-spec*;
+			decl'*      := <filter(desugar-declarations); concat> decl*;
+			decl'       := <try(desugar-params(|decl'*))> decl 
+			
+	desugar-default-decl-spec =
+		(?[]; ![Int()]) <+ id
+		
+	desugar-params(|decl*):
+		Declarator(ptr, FuncDeclarator(name, ParamList(param*))) -> Declarator(ptr, FuncDeclarator(name, ParamTypeList(param-type*)))
+		where
+			param-type* := <map(desugar-param(|decl*))> param*
+			// TODO: parameters declared after the brackets that are not declared in the brackets are ignored.
+			
+	desugar-param(|decl*):
+		name -> ParamDecl(decl-spec'*, decl)
+		where
+			<fetch-elem(?Decl(decl-spec*, decl@Declarator(ptr, name)))> decl*;
+			decl-spec'* := <desugar-default-decl-spec> decl-spec*
+			
+	desugar-param(|decl*):
+		name -> ParamDecl(<desugar-default-decl-spec> [], Declarator(None(), name))
+		where
+			<not(fetch-elem(?Decl(_, Declarator(_, name))))> decl*
+		
+	desugar = desugar-declarations
+	desugar-declarations:
+		Decl(decl-spec*, decl*) -> <map(!Decl(decl-spec'*, <id>))> decl*
+		where
+			<not(?[])> decl*;
+			decl-spec'* := <desugar-default-decl-spec> decl-spec*
+			
+	desugar-declarations:
+		FieldDecl(decl-spec*, decl*) -> <map(!FieldDecl(decl-spec'*, <id>))> decl*
+		where
+			<not(?[])> decl*;
+			decl-spec'* := <desugar-default-decl-spec> decl-spec*

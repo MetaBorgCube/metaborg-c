@@ -25,32 +25,35 @@ binding rules
 
 	StructSpec(Some(s)):
 		defines Struct s 
-			in subsequent scope
+			// in subsequent scope
 		
 	StructSpec(Some(s), _):
 		defines Struct s 
-			in subsequent scope
+			// in subsequent scope
 		scopes Field
 		
 	StructSpec(None(), _):
 		scopes Field
 	
-	// TODO: desugar list
-	FieldDecl(ds*, [Declarator(_, f)]):
+	FieldDecl(ds*, Declarator(_, f)):
 		defines Field f
 			of decl-specs ds*
 			
 	FuncDef(ds*, Declarator(_, FuncDeclarator(f, _)), _, _):
 		defines Function f
 			of decl-specs ds*
-				in subsequent scope
+				// in subsequent scope
 		scopes Declaration
-		
-	// TODO: desugar list
-	Decl(ds*, [Declarator(ptr, d)]):
+
+	ParamDecl(ds*, Declarator(ptr, d)):
 		defines Declaration d
 			of decl-specs ds*
-			in subsequent scope
+			// in subsequent scope
+		
+	Decl(ds*, Declarator(ptr, d)):
+		defines Declaration d
+			of decl-specs ds*
+			// in subsequent scope
 			
 	DeclRef(d):
 		refers to Declaration d
