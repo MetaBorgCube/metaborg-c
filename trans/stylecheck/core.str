@@ -11,7 +11,7 @@ imports
 strategies
 	
 	style-check = fail
-	style-check-all = alltd(style-check)
+	style-check-all = topdown(try(style-check))
 	
 	editor-style-check:
     (selected, position, ast, path, project-path) -> (filename, messages) 

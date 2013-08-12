@@ -15,17 +15,64 @@ signature
 rules // C name checks
 	
 	style-check:
+		TranslationUnit(decl*) -> <id>
+		with
+			<try(check-ordering(
+				?Decl(<fetch(?StructSpec(_, _))>, _)
+			, ?Decl(<not(fetch(?StructSpec(_, _)))>, Declarator(_, _))
+			, ?FuncDef(_, _, _, _)
+		  | "struct declarations"
+		  , "global variables"
+		  , "function declarations"
+	    ))> decl*;
+	    <filter(style-check-global-var)> decl*
+
+	style-check = style-check-struct-spec
+	style-check-struct-spec:
+		StructSpec(name, field-decl*) -> <id>
+		with
+			<try(check-name-gt(|30, "struct"))> name;
+			<try(check-name-lt(|3, "struct"))> name;
+			<try(check-name-is-uppercase(|1, "struct"))> name;
+			<filter(style-check-field-decl)> field-decl*
+			
+	style-check-field-decl:
+		Decl(_, Declarator(_, name)) -> <id>
+		with
+			<try(check-name-gt(|12, "field"))> name;
+			<try(check-name-lt(|3, "field"))> name
+	
+	style-check-global-var:
+		Decl(decl-spec*, Declarator(_, name)) -> <id>
+		where
+			<not(fetch(?StructSpec(_, _)))> decl-spec*
+		with
+			<try(check-name-gt(|12, "global variable"))> name;
+			<try(check-name-lt(|3, "global variable"))> name;
+			<try(check-name-starts-with(|"g", "global variable"))> name;
+			<try(check-name-is-uppercase(|2, "global variable"))> name
+	
+	style-check = style-check-func-def
+	style-check-func-def:
+		FuncDef(_, Declarator(_, FuncDeclarator(name, _)), _, Block(stm*)) -> <id>
+		with
+			<try(check-name-gt(|30, "function"))> name;
+			<try(check-name-lt(|3, "function"))> name;
+			<filter(style-check-local-var)> stm*
+	
+	style-check = style-check-param-decl
+	style-check-param-decl:
 		ParamDecl(_, Declarator(_, name)) -> <id>
 		with
-			<try(check-name-gt(|8, "Parameter"))> name;
-			<try(check-name-lt(|2, "Parameter"))> name;
-			<try(check-name-starts-with(|"p", "Parameter"))> name;
-			<try(check-name-is-uppercase(|2, "Parameter"))> name
+			<try(check-name-gt(|8, "parameter"))> name;
+			<try(check-name-lt(|2, "parameter"))> name;
+			<try(check-name-starts-with(|"p", "parameter"))> name;
+			<try(check-name-is-uppercase(|2, "parameter"))> name
 			
-	style-check:
-		Decl(_, [Declarator(_, name)]) -> <id>
+	style-check-local-var:
+		Decl(_, Declarator(_, name)) -> <id>
 		with
-			<try(check-name-gt(|12, "Local variable"))> name;
-			<try(check-name-lt(|3, "Local variable"))> name;
-			<try(check-name-starts-with(|"l", "Local variable"))> name;
-			<try(check-name-is-uppercase(|2, "Local variable"))> name
+			<try(check-name-gt(|12, "local variable"))> name;
+			<try(check-name-lt(|3, "local variable"))> name;
+			<try(check-name-starts-with(|"l", "local variable"))> name;
+			<try(check-name-is-uppercase(|2, "local variable"))> name
