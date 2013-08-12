@@ -15,15 +15,17 @@ signature
 rules // C name checks
 	
 	style-check:
-		C-ParamDecl(_, Some(C-IdDecl(_, C-Id(name), _))) -> <id>
+		ParamDecl(_, Declarator(_, name)) -> <id>
 		with
 			<try(check-name-gt(|8, "Parameter"))> name;
 			<try(check-name-lt(|2, "Parameter"))> name;
-			<try(check-name-starts-with(|"p", "Parameter"))> name
+			<try(check-name-starts-with(|"p", "Parameter"))> name;
+			<try(check-name-is-uppercase(|2, "Parameter"))> name
 			
 	style-check:
-		C-Declaration2(_, [amb([_, C-IdDecl(_, C-Id(name), _)])]) -> <id>
+		Decl(_, [Declarator(_, name)]) -> <id>
 		with
 			<try(check-name-gt(|12, "Local variable"))> name;
 			<try(check-name-lt(|3, "Local variable"))> name;
-			<try(check-name-starts-with(|"l", "Local variable"))> name
+			<try(check-name-starts-with(|"l", "Local variable"))> name;
+			<try(check-name-is-uppercase(|2, "Local variable"))> name

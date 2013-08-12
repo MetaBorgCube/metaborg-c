@@ -27,17 +27,17 @@ rules // Name checks
 			not(<string-starts-with(|string)> name);
 			<create-error(|name)> $[[kind] must start with the character(s) '[string]']
 
-	check-name-is-uppercase(|index, kind):
+	check-name-is-uppercase(|position, kind):
 		name -> name
 		where
-			<not(explode-string; index(|index); is-upper)> name;
-			<create-error(|name)> $[Character [index] of a [kind] must be upper case]
+			<not(explode-string; index(|position); is-upper)> name;
+			<create-error(|name)> $[Character [position] of a [kind] must be upper case]
 			
-	check-name-is-lowercase(|index, kind):
+	check-name-is-lowercase(|position, kind):
 		name -> name
 		where
-			<not(explode-string; index(|index); is-lower)> name;
-			<create-error(|name)> $[Character [index] of a [kind] must be lower case]
+			<not(explode-string; index(|position); is-lower)> name;
+			<create-error(|name)> $[Character [position] of a [kind] must be lower case]
 
 rules // Ordering checks
 	

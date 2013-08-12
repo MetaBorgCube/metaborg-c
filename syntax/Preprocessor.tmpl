@@ -1,0 +1,38 @@
+lexical syntax
+
+  ~[\n]                 -> PPToken
+  PPToken+              -> PPTokenSeq
+  ( [\ \t] | Comment )* -> PPWS
+  ( [\n] | EOF )        -> PPNL
+  
+  ~[\>\n]               -> PPHChar
+	~[\"\n]               -> PPQChar
+	"<" PPHChar+ ">"      -> PPHeaderName
+	"\"" PPQChar+ "\""    -> PPHeaderName
+
+lexical restrictions
+
+  PPTokenSeq -/- ~[\n]
+  PPWS       -/-  [\ \t]
+	
+lexical syntax
+
+  "#" PPWS "if" PPWS PPTokenSeq PPWS PPNL              -> ControlLine
+  "#" PPWS "ifdef" PPWS Id PPWS PPNL                   -> ControlLine
+  "#" PPWS "ifndef" PPWS Id PPWS PPNL                  -> ControlLine
+  "#" PPWS "elif" PPWS PPTokenSeq PPWS PPNL            -> ControlLine
+  "#" PPWS "else" PPWS PPNL                            -> ControlLine
+  "#" PPWS "endif" PPWS PPNL                           -> ControlLine
+  "#" PPWS "include" PPWS PPHeaderName PPWS PPNL       -> ControlLine
+  "#" PPWS "define" PPWS PPTokenSeq PPWS PPNL          -> ControlLine
+  "#" PPWS "undef" PPWS PPTokenSeq PPWS PPNL           -> ControlLine
+  "#" PPWS "line" PPWS PPTokenSeq? PPWS PPNL           -> ControlLine
+  "#" PPWS "error" PPWS PPTokenSeq? PPWS PPNL          -> ControlLine
+  "#" PPWS "pragma" PPWS PPTokenSeq? PPWS PPNL         -> ControlLine
+  "#" PPWS PPNL                                        -> ControlLine
+
+templates
+
+  ExternalDecl.PP = <<ControlLine>>
+  StructDecl.PP   = <<ControlLine>>
+  Stm.PP          = <<ControlLine>>

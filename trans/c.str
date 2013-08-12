@@ -1,31 +1,77 @@
 module c
 
 imports
-  libstratego-lib
-  libstratego-gpp
-  libstratego-aterm
-  include/C
-  lib/editor-common.generated
-  
-  stylecheck/-
+	
+	libstratego-lib
+	libstratego-gpp
+	libstratego-aterm
+	include/C
+	lib/editor-common.generated
+	lib/runtime/analysis/-
+	lib/runtime/nbl/-
+	lib/runtime/task/-
+	lib/runtime/index/-
+	names
+	desugar
+	stylecheck/-
 
 rules // Analysis
+ 
+  editor-analyze = analysis-default-editor
   
-  editor-analyze:
-    (ast, path, project-path) -> (ast, [], [], [])
-    with
-      editor-init
+  analysis-single-default-interface = 
+  	analysis-single-default(desugar-all, id, id|<language>)
+  analysis-multiple-default-interface = 
+  	analysis-multiple-default(parse-file <+ !(), desugar-all, id, id|<language>, <project-path>)
+  
+  editor-save = analysis-save-default(|<language>)
+
+	analysis-default-debug-interface(msg) = debug(msg)
+	analysis-default-debug-interface = debug      
+
+rules // Editor services
+
+  editor-resolve:
+    (node, position, ast, path, project-path) -> definition
+    where
+    	task-setup(|project-path);
+    	index-setup(|<language>, [project-path], $[[project-path]/[path]]);
+    	<nabl-has-reference> node;
+    	definition := <nabl-collect-one-resolved-def; index-get-all; Hd> node
+
+  editor-hover:
+    (target, position, ast, path, project-path) -> <fail>
+
+  editor-complete:
+    (node, position, ast, path, project-path) -> <nabl-propose-completions> ast
 
 rules // Debugging
   
-  debug-generate-aterm:
+  debug-show-aterm:
     (selected, position, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"aterm")> path;
-      result   := selected
+      result   := <desugar-all> selected
       
-  debug-pretty-print:
-    (selected, position, ast, path, project-path) -> (filename, result)
+  debug-show-analyzed:
+    (selected, position, ast, path, project-path) -> (filename, selected)
     with
-      filename := <guarantee-extension(|"c")> path;
-      result   := <pp-c-string> selected
+      filename := <guarantee-extension(|"analyzed.aterm")> path
+
+  debug-show-current-partition =
+    analysis-debug-show-current-partition(|<language>)
+     
+  debug-show-all-partitions =
+    analysis-debug-show-all-partitions(|<language>)
+
+  debug-show-tasks =
+  	analysis-debug-show-tasks(|<language>)
+
+  debug-reset-index =
+    analysis-debug-reset-index(|<language>)
+    
+  debug-reset-task =
+  	analysis-debug-reset-task(|<language>)
+  	
+  debug-reanalyze = 
+  	analysis-debug-reanalyze(|<language>)
