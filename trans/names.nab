@@ -22,6 +22,9 @@ binding rules
 
 	TranslationUnit(_):
 		scopes Struct, Union, Function, Declaration
+		implicitly defines Function "printf"
+		implicitly defines Function "puts"
+		implicitly defines Function "atoi"
 
 	StructSpec(Some(s)):
 		defines Struct s 
@@ -59,4 +62,6 @@ binding rules
 		refers to Declaration d
 		otherwise
 			refers to Struct d
+		otherwise
+			refers to Function d
 		

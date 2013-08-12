@@ -15,7 +15,7 @@ rules
 		FuncDef(decl-spec*, decl, decl*, block) -> FuncDef(decl-spec'*, decl', [], block)
 		with
 			decl-spec'* := <desugar-default-decl-spec> decl-spec*;
-			decl'*      := <filter(desugar-declarations); concat> decl*;
+			decl'*      := <filter(desugar-declarations); try(concat)> decl*;
 			decl'       := <try(desugar-params(|decl'*))> decl 
 			
 	desugar-default-decl-spec =
@@ -30,7 +30,7 @@ rules
 	desugar-param(|decl*):
 		name -> ParamDecl(decl-spec'*, decl)
 		where
-			<fetch-elem(?Decl(decl-spec*, decl@Declarator(ptr, name)))> decl*;
+			Decl(decl-spec*, decl) := <fetch-elem(?Decl(_, Declarator(_, name)))> decl*;
 			decl-spec'* := <desugar-default-decl-spec> decl-spec*
 			
 	desugar-param(|decl*):
