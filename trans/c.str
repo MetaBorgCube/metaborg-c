@@ -40,7 +40,7 @@ rules // Editor services
     	definition := <nabl-collect-one-resolved-def; index-get-all; Hd> node
 
   editor-hover:
-    (target, position, ast, path, project-path) -> <fail>
+    (target, position, ast, path, project-path) -> <origin-location> target
 
   editor-complete:
     (node, position, ast, path, project-path) -> <nabl-propose-completions> ast

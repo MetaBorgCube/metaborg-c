@@ -29,18 +29,21 @@ rules // C name checks
 
 	style-check = style-check-struct-spec
 	style-check-struct-spec:
-		StructSpec(name, field-decl*) -> <id>
+		t@StructSpec(name, field-decl*) -> <id>
 		with
 			<try(check-name-gt(|30, "struct"))> name;
 			<try(check-name-lt(|3, "struct"))> name;
 			<try(check-name-is-uppercase(|1, "struct"))> name;
+			<try(check-indentation(|0, "struct"))> t;
 			<filter(style-check-field-decl)> field-decl*
 			
 	style-check-field-decl:
-		Decl(_, Declarator(_, name)) -> <id>
+		t@Decl(decl-spec*, Declarator(_, name)) -> <id>
 		with
 			<try(check-name-gt(|12, "field"))> name;
-			<try(check-name-lt(|3, "field"))> name
+			<try(check-name-lt(|3, "field"))> name;
+			<try(Hd; check-indentation(|1, "struct"))> decl-spec* // first element in decl-spec* is the first text element.
+			// TODO: inherit indentation level from parent.
 	
 	style-check-global-var:
 		Decl(decl-spec*, Declarator(_, name)) -> <id>
@@ -50,19 +53,23 @@ rules // C name checks
 			<try(check-name-gt(|12, "global variable"))> name;
 			<try(check-name-lt(|3, "global variable"))> name;
 			<try(check-name-starts-with(|"g", "global variable"))> name;
-			<try(check-name-is-uppercase(|2, "global variable"))> name
+			<try(check-name-is-uppercase(|2, "global variable"))> name;
+			<try(Hd; check-indentation(|1, "struct"))> decl-spec* // first element in decl-spec* is the first text element.
+			// TODO: inherit indentation level from parent.
 	
 	style-check = style-check-func-def
 	style-check-func-def:
-		FuncDef(_, Declarator(_, FuncDeclarator(name, _)), _, Block(stm*)) -> <id>
+		FuncDef(decl-spec*, Declarator(_, FuncDeclarator(name, _)), _, Block(stm*)) -> <id>
 		with
 			<try(check-name-gt(|30, "function"))> name;
 			<try(check-name-lt(|3, "function"))> name;
-			<filter(style-check-local-var)> stm*
+			<filter(style-check-local-var)> stm*;
+			<try(Hd; check-indentation(|0, "struct"))> decl-spec* // first element in decl-spec* is the first text element.
+			// TODO: inherit indentation level from parent.
 	
 	style-check = style-check-param-decl
 	style-check-param-decl:
-		ParamDecl(_, Declarator(_, name)) -> <id>
+		ParamDecl(decl-spec*, Declarator(_, name)) -> <id>
 		with
 			<try(check-name-gt(|8, "parameter"))> name;
 			<try(check-name-lt(|2, "parameter"))> name;
@@ -70,9 +77,11 @@ rules // C name checks
 			<try(check-name-is-uppercase(|2, "parameter"))> name
 			
 	style-check-local-var:
-		Decl(_, Declarator(_, name)) -> <id>
+		Decl(decl-spec*, Declarator(_, name)) -> <id>
 		with
 			<try(check-name-gt(|12, "local variable"))> name;
 			<try(check-name-lt(|3, "local variable"))> name;
 			<try(check-name-starts-with(|"l", "local variable"))> name;
-			<try(check-name-is-uppercase(|2, "local variable"))> name
+			<try(check-name-is-uppercase(|2, "local variable"))> name;
+			<try(Hd; check-indentation(|1, "struct"))> decl-spec* // first element in decl-spec* is the first text element.
+			// TODO: inherit indentation level from parent.

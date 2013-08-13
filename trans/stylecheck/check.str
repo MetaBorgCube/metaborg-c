@@ -4,6 +4,7 @@ imports
 	
 	include/C
 	stylecheck/core
+	lib/runtime/editor/origins
 	
 rules // Name checks
 	
@@ -105,6 +106,16 @@ rules // Ordering checks
 		; <try(check-comes-before(s4, s5|t4, t5))> list
 	
 rules // Spacing/tab checks
+	
+	check-indentation(|level, kind):
+		term -> <id>
+		where
+			level-mult := <check-indentation-multiplier <+ !level> level;
+			(_, start-col, _, _) := <origin-location> term;
+			<not(eq)> (start-col, level-mult);
+			<create-error(|term)> $[Needs to be at indentation level [level].]
+			
+	check-indentation-multiplier = fail
 	
 rules // Line feed checks
 	
