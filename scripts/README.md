@@ -2,6 +2,8 @@ This folder contains scripts to generate files to be used in other projects.
 
 Be sure to have `pack-sdf` and `sdf2table` on your path.
 
+https://github.com/metaborg/homebrew-metaborg
+
 ## `mix-to-table.sh [project-path] [mix-filename]`
 
 generates `.def` and `.tbl` file for mix syntax. files will be generated in current directory.
