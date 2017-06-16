@@ -1,0 +1,14 @@
+module metaborgc
+
+imports
+  
+  Common ExternalDefinitions
+
+context-free start-symbols 
+  
+		Start
+
+context-free syntax
+  
+  Start.Empty = <>
+  Start.CProgram = <<TranslationUnit>>

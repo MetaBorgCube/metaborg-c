@@ -1,0 +1,104 @@
+module Lexical
+
+imports Expressions Common
+
+context-free syntax
+
+	Constant.CharConst   = <<CharConst>>
+	Constant.IntConst    = <<IntConst>>
+	Constant.OctConst    = <<OctConst>>
+	Constant.HexConst    = <<HexConst>>
+	Constant.FloatConst  = <<FloatConst>>
+	Constant.StringConst = <<StringConst>>
+	
+lexical syntax
+	IntConst = NonzeroDigit Digit* IntSuffix?
+	IntConst = [0] IntSuffix? 
+	
+	IntSuffix = UnsignedSuffix LongSuffix? 
+	IntSuffix = UnsignedSuffix LongLongSuffix 
+	IntSuffix = LongSuffix UnsignedSuffix?  
+	IntSuffix = LongLongSuffix UnsignedSuffix? IntSuffix
+	
+	UnsignedSuffix = [uU]
+	LongSuffix = [lL]
+	LongLongSuffix = "ll"
+	LongLongSuffix = "LL"
+	
+	Digit = [0-9] 
+	NonzeroDigit = [1-9] 
+	
+lexical syntax // Octal constant
+
+	OctConst = [0] OctDigit+ 
+	OctDigit = [0-7]
+	
+lexical restrictions
+
+	OctConst -/- [0-7]
+	
+lexical syntax // Hexadecimal constants
+
+	HexConst = [0] HexPrefix HexDigit+ 
+	HexPrefix = [Xx]                    
+	HexDigit = [0-9a-fA-F]            
+
+lexical restrictions
+
+	HexConst  -/- [0-9a-fA-FxX]
+	
+lexical syntax // Float constants
+
+	FloatConst = DecFloatConst 
+	FloatConst = HexFloatConst 
+	
+	// TODO: ExpPart & FloatSuffix should be in AST.
+	DecFloatConst = FracConst ExpPart? FloatSuffix?
+	DecFloatConst = Digit+    ExpPart FloatSuffix? 
+	
+	FracConst = Digit* "." Digit+ 
+	FracConst = Digit+ "."        
+	
+	// TODO: Sign should be in AST.
+	ExpPart = [eE] Sign? Digit+
+	BinExpPart = [pP] Sign? Digit+
+	
+	// TODO: BinExpPart & FloatSuffix should be in AST.
+	HexFloatConst = HexPrefix HexFracConst BinExpPart FloatSuffix?
+	HexFloatConst = HexPrefix HexDigit+    BinExpPart FloatSuffix? 
+	
+	HexFracConst = HexDigit* "." HexDigit+ 
+	HexFracConst = HexDigit+ "."           
+	
+	FloatSuffix = [flFL]
+
+lexical syntax // Universal character names
+
+	UniCharName = "\\u" HexQuad                       
+	UniCharName = "\\U" HexQuad HexQuad               
+	HexQuad = HexDigit HexDigit HexDigit HexDigit	
+	
+lexical syntax // Escape sequences
+	
+	EscSeq = [\\] [\'\"\?\\abfnrtv]           
+	EscSeq = [\\] OctDigit OctDigit? OctDigit? 
+	EscSeq = [\\] HexPrefix HexDigit+       
+	EscSeq = UniCharName                      
+	
+	
+lexical syntax // Character constant
+	
+	// TODO: CharPrefix should be in AST.
+	CharConst = [LuU]? "'" Char+ "'"
+	Char = ~[\\\'\n]
+	Char = EscSeq
+	
+	
+lexical syntax // String constant
+
+	// TODO: EncPrefix should be in AST.
+	StringConst = EncPrefix? "\"" SChar* "\""
+	EncPrefix = "u8"                        
+	EncPrefix = [uUL]                       
+	SChar = ~[\\\"\n]                   
+	SChar = EscSeq                     

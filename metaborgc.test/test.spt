@@ -1,0 +1,10 @@
+module test
+
+language metaborgc
+
+test parse [[
+  int main(){
+    printf("hello world");
+    return 0;
+  }
+]] parse succeeds

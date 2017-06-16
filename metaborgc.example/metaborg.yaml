@@ -1,0 +1,10 @@
+---
+id: org.metaborg:metaborgc.example:0.1.0-SNAPSHOT
+name: metaborgc
+dependencies:
+  compile:
+  - org.metaborg:metaborgc:0.1.0-SNAPSHOT
+debug:
+  typesmart: false
+build:
+  useBuildSystemSpec: true

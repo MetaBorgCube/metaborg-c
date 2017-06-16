@@ -1,0 +1,145 @@
+module Declarations
+imports Common Expressions
+context-free syntax
+
+	Decl.Decl = <<DeclSpecs> <{InitDeclarator ", "}+>;> {prefer}
+	Decl.Decl = <<DeclSpecs> <{InitDeclarator ", "}*>;> {prefer}
+	
+	DeclSpec = <<StoreClassSpec>>
+	DeclSpec = <<TypeSpec>>
+	DeclSpec = <<TypeQualifier>>
+	DeclSpec = <<FuncSpec>>
+	DeclSpec = <<AlignSpec>>
+	
+	DeclSpecs = <<{DeclSpec ", "}*>>
+	
+	InitDeclarator      = <<Declarator>>
+	InitDeclarator.Init = <<Declarator> = <Initializer>>
+	
+	StoreClassSpec.Typedef     = <typedef>
+	StoreClassSpec.Extern      = <extern>
+	StoreClassSpec.Static      = <static>
+	StoreClassSpec.ThreadLocal = <_Thead_local>
+	StoreClassSpec.Auto        = <auto>
+	StoreClassSpec.Register    = <register>
+	
+	TypeSpec.Void = <void>
+	TypeSpec.Char = <char>
+	TypeSpec.Short = <short>
+	TypeSpec.Int = <int>
+	TypeSpec.Long = <long>
+	TypeSpec.Float = <float>
+	TypeSpec.Double = <double>
+	TypeSpec.Signed = <signed>
+	TypeSpec.Unsigned = <unsigned>
+	TypeSpec.Bool = <_Bool>
+	TypeSpec.Complex = <_Complex>
+	TypeSpec.DeclRef = <<ID>>
+	TypeSpec = <<AtomicTypeSpec>>
+	TypeSpec = <<StructOrUnionSpec>>
+	TypeSpec = <<EnumSpec>>
+	
+	StructOrUnionSpec.StructSpec = 
+		<
+			struct <ID?> {
+				<{StructDecl "\n"}+>
+			}
+		>
+	StructOrUnionSpec.StructSpec = <struct <ID>>
+	StructOrUnionSpec.UnionSpec = 
+		<
+			union <ID?> {
+				<{StructDecl "\n"}+>
+			}
+		>
+	StructOrUnionSpec.UnionSpec  = <union <ID>>
+	
+	// Prefer so that the name of named field declarations are not recognised as a typedef.
+	// Also prefer StructDeclarator over StructBitfieldDeclarator for the same reason.
+	StructDecl.FieldDecl = <<{SpecifierQualifier " "}+> <{StructDeclarator ", "}+>;> {prefer}
+	StructDecl.FieldDecl = <<{SpecifierQualifier " "}+> <{StructBitfieldDeclarator ", "}*>;>
+	
+	SpecifierQualifier = <<TypeSpec>>
+	SpecifierQualifier = <<TypeQualifier>>
+	
+	StructDeclarator          = <<Declarator>>
+	StructDeclarator.Bitfield = <<Declarator> : <ConstExp>>
+	
+	StructBitfieldDeclarator.Bitfield = < : <ConstExp>>
+	StructBitfieldDeclarator          = <<Declarator>>
+	
+	EnumSpec.EnumSpec = 
+		<
+			enum <ID?> {
+				<{Enumerator ",\n"}+><Comma?>
+			}
+		>
+	EnumSpec.EnumSpec = <enum <ID>>
+	
+	Enumerator.EnumConst = <<ID>>
+	Enumerator.EnumConst = <<ID> = <ConstExp>>
+	
+	AtomicTypeSpec.Atomic = <_Atomic(<TypeName>)>
+	
+	TypeQualifier.Const = <const>
+	TypeQualifier.Restrict = <restrict>
+	TypeQualifier.Volatile = <volatile>
+	TypeQualifier.Atomic = <_Atomic>
+	
+	FuncSpec.Inline = <inline>
+	FuncSpec.NoReturn = <_Noreturn>
+	
+	AlignSpec.Alignas = <_Alignas(<TypeName>)>
+	AlignSpec.Alignas = <_Alignas(<ConstExp>)>
+	
+	Declarator.Declarator = <<Ptr?> <DirectDeclarator>> // TODO: Proper constructor name
+	
+	DirectDeclarator                 = <<ID> >
+	DirectDeclarator                 = <(<Declarator>)> {bracket}
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<{TypeQualifier " "}*> <AssignExp?>]> // TODO: Give unique constructor name
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[static <{TypeQualifier " "}*> <AssignExp>]> // TODO: Give unique constructor name
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<{TypeQualifier " "}+> static <AssignExp>]> // TODO: Give unique constructor name
+	DirectDeclarator.ArrayDeclarator = <<DirectDeclarator>[<{TypeQualifier " "}+> *]> // TODO: Give unique constructor name
+	DirectDeclarator                 = <<DirectFuncDeclarator>>
+	
+	FuncDeclarator.Declarator = <<Ptr?> <DirectFuncDeclarator>> // TODO: Proper constructor name
+	
+	// Prefer over ParamTypeList so that the names in a typeless parameter list do not get treated as TypedefNames.
+	DirectFuncDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamList>)> {prefer}
+	DirectFuncDeclarator.FuncDeclarator  = <<DirectDeclarator>(<ParamTypeList>)>
+	
+	Ptr.Ptr = <*<{TypeQualifier " "}*>>
+	Ptr.Ptr = <*<{TypeQualifier " "}*><Ptr>>
+	
+	ParamTypeList.ParamTypeList   = <<{ParamDecl ", "}*>>
+	ParamTypeList.ParamTypeVararg = <<{ParamDecl ", "}+>, ...>
+	
+	ParamList.ParamList           = <<{ID ", "}+>>
+
+	// Avoid so that the first ParamDecl production is chosen if the declaration has a name.
+	ParamDecl.ParamDecl = <<DeclSpecs> <AbstractDeclarator?>> {avoid}
+	ParamDecl.ParamDecl = <<DeclSpecs> <Declarator>>
+	
+	TypeName.TypeName = <<{SpecifierQualifier " "}+> <AbstractDeclarator?>>
+	
+	AbstractDeclarator.ADeclarator = <<Ptr>> // TODO: Proper constructor name
+	AbstractDeclarator.ADeclarator = <<Ptr?> <DirectAbstractDeclarator>> // TODO: Proper constructor name
+	
+	DirectAbstractDeclarator = <(<AbstractDeclarator>)> {bracket}
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[<{TypeQualifier " "}*> <AssignExp?>]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[static <{TypeQualifier " "}*> <AssignExp>]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[<{TypeQualifier " "}+> static <AssignExp>]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.ArrayADeclarator = <<DirectAbstractDeclarator?>[*]> // TODO: Give unique constructor name
+	DirectAbstractDeclarator.FuncADeclarator  = <<DirectAbstractDeclarator?>(<ParamTypeList>)>
+	
+	Initializer             = <<AssignExp>>
+	Initializer.Initializer = <{<{DesignationInit ", "}+><Comma?>}> 
+	
+	DesignationInit                 = <<Initializer>> 
+	DesignationInit.DesignationInit = <<Designation> <Initializer>> // TODO: Proper constructor name
+	
+	Designation.Designation = <<{Designator " "}+> = >  // TODO: Proper constructor name
+	
+	Designator.Designator = <[<ConstExp>]> // TODO: Proper constructor name
+	Designator.Designator = <.<ID>> // TODO: Proper constructor name
+	

@@ -1,0 +1,26 @@
+module MetaborgcMix[E]
+
+imports
+
+  metaborgc
+
+exports
+
+  lexical syntax
+
+    [0-9]* -> MetaVarSuffix
+    "_" [A-Za-z0-9\_\-]+ -> MetaVarSuffix
+      
+  context-free syntax
+
+    "c-exp"  "|[" Exp "]|" -> E {cons("ToMetaExpr")}
+    
+  variables
+  
+    "exp"   [0-9\']*           -> Exp {prefer}
+	
+  context-free restrictions
+  
+    ID -/- [\_a-zA-Z0-9\']
+	
+	

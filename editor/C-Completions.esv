@@ -1,7 +1,0 @@
-module C-Completions
-
-imports C-Completions.generated
-
-completions
-
-	completion proposer : editor-complete

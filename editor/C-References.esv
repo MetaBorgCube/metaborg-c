@@ -1,8 +1,0 @@
-module C-References
-
-imports C-References.generated
-
-references
-
-	reference _ : editor-resolve
-  hover _     : editor-hover
