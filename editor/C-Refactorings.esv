@@ -1,5 +1,0 @@
-module C-Refactorings
-
-imports C-Refactorings.generated
-
-refactorings

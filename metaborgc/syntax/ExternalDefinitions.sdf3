@@ -1,0 +1,13 @@
+module ExternalDefinitions
+
+imports Declarations Statements
+
+context-free syntax
+
+	TranslationUnit.TranslationUnit = <<{ExternalDecl "\n\n"}+>>
+	
+	ExternalDecl = <<FuncDef>>
+	ExternalDecl = <<Decl>>
+	
+	// There should be at least one DeclSpec according to C11 syntax, but old syntax allows none.
+	FuncDef.FuncDef = <<{DeclSpec " "}*> <FuncDeclarator> <{Decl " "}*> <CompoundStm>>

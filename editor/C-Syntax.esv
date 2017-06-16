@@ -1,5 +1,0 @@
-module C-Syntax
-
-imports C-Syntax.generated
-
-language
