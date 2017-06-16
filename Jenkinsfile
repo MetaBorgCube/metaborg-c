@@ -28,13 +28,13 @@ node{
       }
     }
 
-    stage('Archive') {
-      archiveArtifacts(
-        artifacts: 'javascript.eclipse.site/target/site/',
-        excludes: null,
-        onlyIfSuccessful: true
-      )
-    }
+//    stage('Archive') {
+//      archiveArtifacts(
+//        artifacts: 'javascript.eclipse.site/target/site/',
+//        excludes: null,
+//        onlyIfSuccessful: true
+//      )
+//    }
 
     stage('Cleanup') {
       sh "git clean -fXd"
