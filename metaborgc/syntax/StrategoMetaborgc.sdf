@@ -1,0 +1,7 @@
+module StrategoMetaborgc
+
+imports
+  StrategoMix[StrategoHost]
+  MetaborgcMix[ Term[[StrategoHost]] ]
+hiddens
+  context-free start-symbols Module[[StrategoHost]] 
