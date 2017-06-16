@@ -1,4 +1,4 @@
-module metaborg-c
+module metaborgc
 
 imports
   
