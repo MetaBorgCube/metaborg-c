@@ -1,8 +1,8 @@
 module Declarations
-imports Common Expressions
+imports Common Expressions Statements Lexical
 context-free syntax
 
-	Decl.Decl = <<DeclSpecs> <{InitDeclarator ", "}+>;> {prefer}
+	//Decl.Decl = <<DeclSpecs> <{InitDeclarator ", "}+>;> {prefer}
 	Decl.Decl = <<DeclSpecs> <{InitDeclarator ", "}*>;> {prefer}
 	
 	DeclSpec = <<StoreClassSpec>>
@@ -10,6 +10,7 @@ context-free syntax
 	DeclSpec = <<TypeQualifier>>
 	DeclSpec = <<FuncSpec>>
 	DeclSpec = <<AlignSpec>>
+	DeclSpec = <<TemplateSpec>>
 	
 	DeclSpecs = <<{DeclSpec ", "}*>>
 	
@@ -32,12 +33,16 @@ context-free syntax
 	TypeSpec.Double = <double>
 	TypeSpec.Signed = <signed>
 	TypeSpec.Unsigned = <unsigned>
-	TypeSpec.Bool = <_Bool>
+	TypeSpec.Bool = <bool> {prefer}
 	TypeSpec.Complex = <_Complex>
-	TypeSpec.DeclRef = <<ID>>
+	TypeSpec.DeclRef = <<ID><Cast?>>
 	TypeSpec = <<AtomicTypeSpec>>
 	TypeSpec = <<StructOrUnionSpec>>
 	TypeSpec = <<EnumSpec>>
+	
+	Cast.Cast = <\<<CastArg>\>>
+	CastArg.Type = <<TypeSpec>>
+	CastArg.Const = <<Constant>>
 	
 	StructOrUnionSpec.StructSpec = 
 		<
@@ -92,6 +97,8 @@ context-free syntax
 	AlignSpec.Alignas = <_Alignas(<TypeName>)>
 	AlignSpec.Alignas = <_Alignas(<ConstExp>)>
 	
+	TemplateSpec.Template = <template \< <{ParamDecl ", "}*>\> class <ID>:<ID> <CompoundStm>>
+	
 	Declarator.Declarator = <<Ptr?> <DirectDeclarator>> // TODO: Proper constructor name
 	
 	DirectDeclarator                 = <<ID> >
@@ -119,6 +126,9 @@ context-free syntax
 	// Avoid so that the first ParamDecl production is chosen if the declaration has a name.
 	ParamDecl.ParamDecl = <<DeclSpecs> <AbstractDeclarator?>> {avoid}
 	ParamDecl.ParamDecl = <<DeclSpecs> <Declarator>>
+	ParamDecl.ParamDecl = <<DeclSpecs> <Declarator> = <Exp>>
+	
+	//decl-specifier-seq declarator = initializer-clause DesignationInit
 	
 	TypeName.TypeName = <<{SpecifierQualifier " "}+> <AbstractDeclarator?>>
 	

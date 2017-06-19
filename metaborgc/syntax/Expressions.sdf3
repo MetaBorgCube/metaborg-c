@@ -30,6 +30,8 @@ context-free syntax
 	UnaryExp.ExpSizeof  = <sizeof<UnaryExp>>
 	UnaryExp.TypeSizeof = <sizeof(<TypeName>)>
 	UnaryExp.Alignof    = <_Alignof(<TypeName>)>
+	UnaryExp.NewArray    = <new <ID><Cast?>[<ID>]>
+	UnaryExp.NewObj    = <new <ID><Cast?>("<ID>")>
 
 	UnaryOp.Ref   = <&>
 	UnaryOp.Deref = <*>

@@ -1,6 +1,6 @@
 module ExternalDefinitions
 
-imports Declarations Statements
+imports Declarations Statements Preprocessor
 
 context-free syntax
 
@@ -11,3 +11,14 @@ context-free syntax
 	
 	// There should be at least one DeclSpec according to C11 syntax, but old syntax allows none.
 	FuncDef.FuncDef = <<{DeclSpec " "}*> <FuncDeclarator> <{Decl " "}*> <CompoundStm>>
+	
+//	CppPreprocessingUnit.CppPreprocessingUnit = <<Group?>>
+//	
+//	Group.Single = <<GroupPart>>
+//	Group.Multiple = <<Group><GroupPart>>
+//	
+//	GroupPart.IfSection = <<IfGroup><ElifGroups?><ElseGroup><EndIfLine>>
+//	
+//	IfGroup.If = <# if>
+//	IfGroup.IfDef = <# ifdef>
+//	IfGroup.IfNDef = <# ifndef>

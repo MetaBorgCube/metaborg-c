@@ -1,6 +1,6 @@
 module Preprocessor
 
-imports Common
+imports Common Expressions
 
 lexical syntax
 
@@ -19,25 +19,31 @@ lexical restrictions
   PPTokenSeq -/- ~[\n]
   PPWS       -/-  [\ \t]
 	
-lexical syntax
+//lexical syntax
 
-	ControlLine =  "#" PPWS "if" PPWS PPTokenSeq PPWS PPNL              
-  	ControlLine = "#" PPWS "ifdef" PPWS ID PPWS PPNL                   
-  	ControlLine = "#" PPWS "ifndef" PPWS ID PPWS PPNL                  
-  	ControlLine = "#" PPWS "elif" PPWS PPTokenSeq PPWS PPNL            
-  	ControlLine = "#" PPWS "else" PPWS PPNL                            
-  	ControlLine = "#" PPWS "endif" PPWS PPNL                           
-  	ControlLine = "#" PPWS "include" PPWS PPHeaderName PPWS PPNL       
-  	ControlLine = "#" PPWS "define" PPWS PPTokenSeq PPWS PPNL          
- 	ControlLine = "#" PPWS "undef" PPWS PPTokenSeq PPWS PPNL            
-  	ControlLine = "#" PPWS "line" PPWS PPTokenSeq? PPWS PPNL           
-  	ControlLine = "#" PPWS "error" PPWS PPTokenSeq? PPWS PPNL           
-  	ControlLine = "#" PPWS "pragma" PPWS PPTokenSeq? PPWS PPNL          
-  	ControlLine = "#" PPWS PPNL                                         
+//	ControlLine =  "#" PPWS "if" PPWS PPTokenSeq PPWS PPNL              
+//  	ControlLine = "#" PPWS "ifdef" PPWS ID PPWS PPNL                   
+//  	ControlLine = "#" PPWS "ifndef" PPWS ID //PPWS //PPNL                  
+//  	ControlLine = "#" PPWS "elif" PPWS PPTokenSeq PPWS PPNL            
+//  	ControlLine = "#" PPWS "else" PPWS PPNL                            
+//  	ControlLine = "#" PPWS "endif" PPWS PPNL                           
+//  	ControlLine = "#" PPWS "include" PPWS PPHeaderName PPWS PPNL       
+//  	ControlLine = "#" PPWS "define" PPWS PPTokenSeq PPWS PPNL          
+// 	ControlLine = "#" PPWS "undef" PPWS PPTokenSeq PPWS PPNL            
+//  	ControlLine = "#" PPWS "line" PPWS PPTokenSeq? PPWS PPNL           
+//  	ControlLine = "#" PPWS "error" PPWS PPTokenSeq? PPWS PPNL           
+//  	ControlLine = "#" PPWS "pragma" PPWS PPTokenSeq? PPWS PPNL          
+//  	ControlLine = "#" PPWS PPNL                                         
 
 context-free syntax
 
   ExternalDecl.PP = <<ControlLine>>
   StructDecl.PP   = <<ControlLine>>
   Stm.PP          = <<ControlLine>>
+  
+  ControlLine.IfH = <# if <ConstExp>>
+  ControlLine.IfNDef = <# ifndef <PPTokenSeq>>
+  ControlLine.Define = <# define <PPTokenSeq>>
+  ControlLine.Include = <# include <PPTokenSeq>>
+  ControlLine.EndIf = <# endif>
 

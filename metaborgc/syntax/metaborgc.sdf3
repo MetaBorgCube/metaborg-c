@@ -12,3 +12,4 @@ context-free syntax
   
   Start.Empty = <>
   Start.CProgram = <<TranslationUnit>>
+ // Start.CppHeader = <<CppPreprocessingUnit>>

@@ -2,12 +2,21 @@ module Statements
 imports Expressions Common Declarations
 context-free syntax
 
+	Stm = <<MemberStm>> {prefer}
 	Stm = <<LabeledStm>>
 	Stm = <<CompoundStm>>
 	Stm = <<ExpStm>>
 	Stm = <<SelectionStm>>
 	Stm = <<IterStm>>
 	Stm = <<JmpStm>>
+	Stm.Sys = <<ID>(<ID>)<CompoundStm>>
+	
+	
+	MemberStm.MemberStm = <<AccessSpecifier> : <Compound>>
+	
+	AccessSpecifier.Public = "public"
+	AccessSpecifier.Private = "private"
+	AccessSpecifier.Protected = "protected"
 	
 	LabeledStm.Label   = <<ID> : <Stm>>
 	LabeledStm.Case    = <case <ConstExp> : <Stm>>
@@ -19,11 +28,13 @@ context-free syntax
 				<{BlockItem "\n"}*>
 			}
 		>
+	
+	Compound = <<{BlockItem "\n"}*>>
 		
 	BlockItem = <<Decl>>
 	BlockItem = <<Stm>>
 	
-	ExpStm.ExpStm = <<Exp?>;>
+	ExpStm.ExpStm = <<Exp>;>
 	
 	// Prefer If to prevent ambiguity between If and IfElse.
 	SelectionStm.If     = <if(<Exp>) <Stm>> {prefer}
