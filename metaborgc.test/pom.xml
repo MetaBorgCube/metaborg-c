@@ -38,7 +38,7 @@
         <artifactId>spoofax-maven-plugin</artifactId>
         <version>${metaborg-version}</version>
         <configuration>
-          <languageUnderTest>org.metaborg:metaborgc:0.1.0-SNAPSHOT</languageUnderTest>
+          <languageUnderTest>${project.groupId}:metaborgc:${project.version}</languageUnderTest>
         </configuration>
       </plugin>
     </plugins>
