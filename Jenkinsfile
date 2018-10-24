@@ -51,8 +51,6 @@ pipeline {
     }
   }
   post {
-    success {
-    }
     failure {
       slackSend(color: 'danger', channel: '#spoofax-dev', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} - failed :facepalm: (<${env.BUILD_URL}|Status> <${env.BUILD_URL}console|Console>)")
     }
