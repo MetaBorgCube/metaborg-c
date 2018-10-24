@@ -17,19 +17,15 @@ else
   SPOOFAX_VERSION=$2
 fi
 
-sed -i '' "s/$OLD_VERSION-SNAPSHOT/$NEW_VERSION/g" lang.java/metaborg.yaml
-sed -i '' "s/$OLD_VERSION-SNAPSHOT/$NEW_VERSION/g" lang.java.example/metaborg.yaml
-sed -i '' "s/$OLD_VERSION-SNAPSHOT/$NEW_VERSION/g" lang.java.test/metaborg.yaml
+sed -i '' "s/$OLD_VERSION-SNAPSHOT/$NEW_VERSION/g" metaborgc/metaborg.yaml
+sed -i '' "s/$OLD_VERSION-SNAPSHOT/$NEW_VERSION/g" metaborgc.example/metaborg.yaml
+sed -i '' "s/$OLD_VERSION-SNAPSHOT/$NEW_VERSION/g" metaborgc.test/metaborg.yaml
 sed -i '' "s|<version>.*</version>|<version>$SPOOFAX_VERSION</version>|g" .mvn/extensions.xml
-
-sed -i '' "s/$OLD_VERSION.qualifier/$NEW_VERSION/g" lang.java.eclipse.site/site.xml
-sed -i '' "s/$OLD_VERSION.qualifier/$NEW_VERSION/g" lang.java.eclipse.feature/feature.xml
-sed -i '' "s/$OLD_VERSION.qualifier/$NEW_VERSION/g" lang.java.eclipse/META-INF/MANIFEST.MF
 
 # Update Spoofax to newest released version
 mvn -f pom.xml versions:update-parent -DgenerateBackupPoms=false
-mvn -f lang.java/pom.xml versions:update-parent -DgenerateBackupPoms=false
-mvn -f lang.java.example/pom.xml versions:update-parent -DgenerateBackupPoms=false
-mvn -f lang.java.test/pom.xml versions:update-parent -DgenerateBackupPoms=false
-# Update java-front version to new version
+mvn -f metaborgc/pom.xml versions:update-parent -DgenerateBackupPoms=false
+mvn -f metaborgc.example/pom.xml versions:update-parent -DgenerateBackupPoms=false
+mvn -f metaborgc.test/pom.xml versions:update-parent -DgenerateBackupPoms=false
+# Update project version to new version
 mvn -f pom.xml versions:set -DnewVersion=$NEW_VERSION -DprocessAllModules=true -DgenerateBackupPoms=false
