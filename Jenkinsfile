@@ -1,65 +1,66 @@
-properties([
-  //pipelineTriggers([
-  //  upstream(
-  //    threshold: hudson.model.Result.SUCCESS,
-  //    upstreamProjects: '/metaborg/spoofax-releng/master'
-  //  )
-  //]),
-  buildDiscarder(logRotator(artifactNumToKeepStr: '3')),
-  disableConcurrentBuilds()
-])
-
-node{
-  try{
-    notifyBuild('Started')
-
-    stage('Checkout') {
-      checkout scm
-      sh "git clean -fXd"
-    }
-
-    stage('Build and Test') {
-      withMaven(
-        //mavenLocalRepo: "${env.JENKINS_HOME}/m2repos/${env.EXECUTOR_NUMBER}", //http://yellowgrass.org/issue/SpoofaxWithCore/173
-		mavenLocalRepo: ".repository",
-        mavenOpts: '-Xmx2G -Xms2G -Xss16m'
-      ){
-        sh 'mvn -B -U clean verify -DforceContextQualifier=\$(date +%Y%m%d%H%M)'
+pipeline {
+  agent any
+  triggers {
+    snapshotDependencies()
+  }
+  options {
+    buildDiscarder logRotator(numToKeepStr: '3')
+    disableConcurrentBuilds()
+    durabilityHint 'PERFORMANCE_OPTIMIZED'
+    timeout(time: 1, unit: 'HOURS')
+  }
+  environment {
+    mavenRepo = '.m2repo'
+    mavenOpts = '-Xmx1G -Xss16M'
+    mavenBuildSettings = 'metaborg-mirror-maven-global-config'
+    mavenDeploySettings = 'metaborg-mirror-deploy-global-maven-config'
+    dateTime = sh(returnStdout: true, script: 'date +%Y%m%d%H%M').trim()
+  }
+  stages {
+    stage('Clean') {
+      steps {
+        sh 'git clean -ddffxx'
       }
     }
-
-//    stage('Archive') {
-//      archiveArtifacts(
-//        artifacts: 'javascript.eclipse.site/target/site/',
-//        excludes: null,
-//        onlyIfSuccessful: true
-//      )
-//    }
-
-    stage('Cleanup') {
-      sh "git clean -fXd"
+    stage('Build & Test') {
+      steps {
+        withMaven(mavenLocalRepo: mavenRepo, mavenOpts: mavenOpts, globalMavenSettingsConfig: mavenBuildSettings) {
+          sh "mvn -B -U clean verify -DforceContextQualifier=$dateTime"
+        }
+      }
     }
-
-    notifyBuild('Succeeded')
-
-  } catch (e) {
-
-    notifyBuild('Failed')
-    throw e
-
+    stage('Deploy Release') {
+      when {
+        tag 'v*'
+      } // Deploy release artifacts only on release branch, when a commit is tagged with a v* (e.g., v0.1.0) tag.
+      steps {
+        withMaven(mavenLocalRepo: mavenRepo, mavenOpts: mavenOpts, globalMavenSettingsConfig: mavenDeploySettings) {
+          sh "mvn -B -nsu deploy -DskipTests -Dmaven.test.skip=true -P release"
+        } // Add release profile (-P release) to enforce that no snapshot dependencies are used in a release.
+      }
+    }
+    stage('Deploy Snapshot') {
+      when {
+        branch 'master'
+      } // Deploy snapshot artifacts only on master branch.
+      steps {
+        withMaven(mavenLocalRepo: mavenRepo, mavenOpts: mavenOpts, globalMavenSettingsConfig: mavenDeploySettings) {
+          sh "mvn -B -nsu deploy -DskipTests -Dmaven.test.skip=true -DforceContextQualifier=$dateTime"
+        }
+      }
+    }
   }
-}
-
-def notifyBuild(String buildStatus) {
-  def message = """${buildStatus}: ${env.JOB_NAME} [${env.BUILD_NUMBER}] ${env.BUILD_URL}"""
-
-  if (buildStatus == 'Succeeded') {
-    color = 'good'
-  } else if (buildStatus == 'Failed') {
-    color = 'danger'
-  } else {
-    color = '#4183C4' // Slack blue
+  post {
+    success {
+    }
+    failure {
+      slackSend(color: 'danger', channel: '#spoofax-dev', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} - failed :facepalm: (<${env.BUILD_URL}|Status> <${env.BUILD_URL}console|Console>)")
+    }
+    fixed {
+      slackSend(color: 'good', channel: '#spoofax-dev', message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} - fixed :party_parrot: (<${env.BUILD_URL}|Status> <${env.BUILD_URL}console|Console>)")
+    }
+    cleanup {
+      sh 'git clean -ddffxx'
+    }
   }
-
-  //slackSend (color: color, message: message, channel: '#webdsl2-dev')
 }
